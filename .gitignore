@@ -1,2 +1,3 @@
 # Archivo que uso para loggear el script
 log.txt
+*.pyc
