@@ -57,7 +57,8 @@ class Disk (Cache):
                        "%03d" % (int(tile.y / 1000) % 1000),
                        "%03d.%s" % (int(tile.y) % 1000, tile.layer.extension)
                     )
-        filename = os.path.join( *components )
+        path = self.basedir +tile.layer.name+"/"+str(tile.z)+"/"+str(tile.x)
+        filename = path + "/" + str(tile.y) + "." + tile.layer.extension
         return filename
 
     def get (self, tile):
@@ -73,10 +74,12 @@ class Disk (Cache):
 
     def set (self, tile, data):
         if self.readonly: return data
+        
         filename = self.getKey(tile)
         dirname  = os.path.dirname(filename)
         if not self.access(dirname, 'write'):
             self.makedirs(dirname)
+        
         tmpfile = filename + ".%d.tmp" % os.getpid()
         if hasattr(os, "umask"):
             old_umask = os.umask(self.umask)
@@ -92,13 +95,6 @@ class Disk (Cache):
             os.rename(tmpfile, filename)
         tile.data = data
 
-        path = "/home/osk/cacheargenmap/"+tile.layer.name+"/"+str(tile.z)+"/"+str(tile.x)
-        if not os.path.exists(path):
-            os.makedirs(path)
-        filename = path + "/" + str(tile.y) + "." + tile.layer.extension
-        output = file(filename, "wb")
-        output.write(data)
-        output.close()        
         return data
     
     def delete (self, tile):
