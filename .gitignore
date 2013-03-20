@@ -1,3 +1,5 @@
 # Archivo que uso para loggear el script
 log.txt
 *.pyc
+php-frontend/wms/cache
+php-frontend/tms/cache
