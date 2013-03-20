@@ -36,8 +36,11 @@ class Argenmap_Cache extends JG_Cache {
 
         $cache = '';
 
-        if (filesize($cache_path) > 0)
+	$fsize = filesize($cache_path);
+        if ( $fsize > 0)
         {
+	    header("Content-Type: image/png");
+	    header("Content-Length: " . $fsize );
 	    $cache = fpassthru( $fp );
         }
         else
