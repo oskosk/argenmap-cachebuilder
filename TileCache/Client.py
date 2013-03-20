@@ -182,7 +182,6 @@ def main ():
             lat, lon, delta = map(float, line.split(","))
             bbox = (lon - delta, lat - delta, lon + delta, lat + delta)
             print "===> %s <===" % (bbox,)
-            print "tu vieja"        
             seed(svc, layer, (5, 17), bbox , force = options.force )
 
 if __name__ == '__main__':
