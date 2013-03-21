@@ -24,9 +24,7 @@ $y = explode('.', $y);
 $format = $y[1];
 $y=$y[0];
 //apendeo el 8 para pedir png8
-$tileURL = sprintf("%s/%s/%s/%s/%s", $baseURL, $capa, $z, $x, $y.$format."8");
-
-
+$tileURL = sprintf("%s/%s/%s/%s/%s.%s", $baseURL, $capa, $z, $x, $y,$format."8");
 
 //$tile = traerTile($tileURL) ;
 
