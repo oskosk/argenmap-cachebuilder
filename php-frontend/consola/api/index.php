@@ -18,7 +18,7 @@ function ping() {
   //include('../este_nodo_ping.php');
   foreach ($CONFIG['otros_nodos_url'] as $url) {
     echo "\n";    
-    echo file_get_contents($url . '/consola/este_nodo_ping.php');
+    echo file_get_contents($url . '/consola/api/este_nodo_ping');
   }
 
 }
@@ -73,7 +73,7 @@ function este_nodo_ping()
   }
     $uniqnodes[] = "$thisNode {color:#192823}";
     $ret = array();
-    $ret['relacioines'] = array_unique($uniq); 
+    $ret['relaciones'] = array_unique($uniq); 
     $ret['nodos'] = array_unique($uniqnodes); 
     echo json_encode($ret);
 }
