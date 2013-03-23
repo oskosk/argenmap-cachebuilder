@@ -1,6 +1,6 @@
 <?php
 
-require_once "../config.inc.php";
+require_once dirname(__FILE__) . "/../config.inc.php";
 require_once "argenmap_cache_stats.php";
 
 $thisNode = $CONFIG['este_nodo_url'];
