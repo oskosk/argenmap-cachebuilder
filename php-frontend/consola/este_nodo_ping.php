@@ -1,8 +1,9 @@
 <?php
 
+require_once "../config.inc.php";
 require_once "argenmap_cache_stats.php";
 
-$thisNode = "http://www.ign.gob.ar/tms";
+$thisNode = $CONFIG['este_nodo_url'];
 $stats = new ArgenmapCacheStats();
 $lines = $stats->ultimosRequests();
 $uniq = array();
