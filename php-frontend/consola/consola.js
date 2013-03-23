@@ -16,7 +16,7 @@
   clear_timeout = null;
   old_data = '';
   actualizar = function () {
-  	$.get("ping.php", function(data){
+  	$.get("api/stats/ping", function(data){
       $('#code').val(data);
       that.updateGraph();
       tid = setTimeout(actualizar,1000);
