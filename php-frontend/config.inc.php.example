@@ -1,0 +1,9 @@
+<?php
+
+$CONFIG = array(
+	'este_nodo_url' => '',
+	'otros_nodos_url' => array(
+		'',
+		''
+	)
+);
