@@ -16,7 +16,7 @@
   clear_timeout = null;
   old_data = '';
   actualizar = function () {
-  	$.get("/argenmap/consola/ping.php", function(data){
+  	$.get("ping.php", function(data){
       $('#code').val(data);
       that.updateGraph();
       tid = setTimeout(actualizar,1000);
