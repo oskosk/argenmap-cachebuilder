@@ -47,7 +47,7 @@ function logIt($z, $x, $y)
   		$referer = $_SERVER["HTTP_REFERER"];
 	}
 
-	$log->LogInfo("$z $x $y - $referer,$ip,$forwarded_for");
+	$log->LogInfo("\t$z\t$x\t$y\t$referer\t$ip\t$forwarded_for");
 }
 
 function traerTile($url)
