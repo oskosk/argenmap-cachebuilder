@@ -9,9 +9,9 @@ $lines = $stats->ultimosRequests();
 $uniq = array();
 $uniqnodes = array();
 foreach ($lines as $ll) {
-	$referer = $ll['client']['referer'];
-	$ip = $ll['client']['ip'];
-	$private_ip = $ll['client']['forwarded_for'];
+	$referer = $ll['referer'];
+	$ip = $ll['ip'];
+	$private_ip = $ll['private_ip'];
 	if ( $ip &&  $private_ip ) {
 		$private_ip = "IP privada N/D";
 	}

@@ -4,6 +4,8 @@ class ArgenmapCacheStats
 	protected $LOG_DIR; 
 	protected $NLINES = 100;
 	protected $access_log_path;
+	protected $_logLines;
+	protected $_logIndex;
 
 	function __construct($NLINES=FALSE)
 	{
@@ -12,6 +14,42 @@ class ArgenmapCacheStats
 		}
 		$this->LOG_DIR = dirname(dirname(__FILE__)) . "/tms/logs";
 		$this->access_log_path = $this->LOG_DIR . '/log.txt';
+
+		
+	}
+
+	function _readLog()
+	{
+		$this->_logLines = file($this->access_log_path);
+		$this->_indexLog($this->_logLines);
+	}
+
+	function _indexLog(&$lines)
+	{
+		foreach($lines as &$ll) {
+			if ($ll == '') {
+				continue;
+			}
+			$request = explode("\t", $ll);
+			$trash = explode(' - ', $request[0]);
+			$datetime = $trash[0];
+			$trash = explode(' ', $datetime);
+			$date = $trash[0];
+			$referer = $request[4];
+			$ip = $cliente[5];
+			//este campo suele venir vacío porque
+			// generalmente no hay proxies involucrador en el request
+			// De hecho, muchois proxies ocultan la ip privada			
+			$private_ip = @$client[6];
+
+			$ret['porReferer'][$referer][] = &$ll;
+			$ret['porIP'][$ip][] = &$ll;
+			$ret['porDate'][$date][] = &$ll;
+			$ret['porDateTime'][$datetime][] = &$ll;
+
+		}	
+		$this->_logIndex = $ret;
+
 	}
 	
 	function urls()
@@ -22,10 +60,70 @@ class ArgenmapCacheStats
 
 	function _urlsCrudos()
 	{
-	 	return shell_exec("awk -F' --> ' '{print $2}' "
-	 	. $this->access_log_path 
-		. " |awk -F' - ' '{print $2}' | awk -F',' '{print $1}' | awk -F'?' '{print $1}' |sort|uniq");
+	 	return shell_exec("awk -F'\t' '{print $2}' $this->access_log_path " 
+		. " | awk -F'?' '{print $1}' |sort|uniq");
 	}
+
+	function _segundosTotalesPorDateTime($datetime)
+	{
+	 	$out = shell_exec("egrep '^$datetime' $this->LOG_DIR/log.txt "
+		. " |  awk -F' - ' '{print $1}'  |uniq |wc -l");		
+		
+		return trim($out);
+
+	}
+
+	public function referersPorDateTime($datetime)
+	{
+
+		if (! date_parse($datetime)) {
+			return false;
+		}
+		$cmd = "egrep '^$datetime' $this->LOG_DIR/log.txt | awk -F'\t' '{print $3}'  |sort |uniq" ;
+
+		//$cmd = "egrep '^$datetime' $this->LOG_DIR/log.txt | awk -F' --> ' '{print $2}' "
+		//. " |awk -F' - ' '{print $2}' | awk -F',' '{print $1}' | awk -F'?' '{print $1}' |sort|uniq";
+
+		$lines =  shell_exec( $cmd ); 
+
+		$lines = explode("\n",  $lines);
+		$referers =  $lines;
+		return $referers;
+	}
+
+	public function clientesPorDateTime($datetime)
+	{
+
+		if (! date_parse($datetime)) {
+			return false;
+		}
+		$cmd = "egrep '^$datetime' $this->LOG_DIR/log.txt | awk -F'\t' '{print $4}' |sort|uniq";
+		
+		$lines =  shell_exec( $cmd ); 
+
+		$lines = explode("\n",  $lines);
+		$referers =  $lines;
+		return $referers;
+	}
+	
+
+	public function requestsPorDateTime($datetime)
+	{
+
+		if (! date_parse($datetime)) {
+			return false;
+		}
+		$cmd = "egrep '^$datetime' $this->LOG_DIR/log.txt";
+
+		$lines = shell_exec($cmd);
+
+		$lines = explode("\n",  $lines);
+		$requests = array();		
+		$requests = array_map(array($this, '_parseLine'), $lines);
+		return $requests;
+
+	}
+	
 
 	public function ultimosRequests()
 	{
@@ -34,7 +132,6 @@ class ArgenmapCacheStats
 
 		$lines = explode("\n",  $lines);
 		$uniq = array();		
-
 		foreach ($lines as $ll) {
 			if (trim($ll) == '') {
 				continue;
@@ -42,6 +139,7 @@ class ArgenmapCacheStats
 			$ll = $this->_parseLine($ll);
 			$uniq[] = $ll;
 		}		
+
 		return $uniq;
 	}
 
@@ -112,46 +210,34 @@ class ArgenmapCacheStats
 
 	protected function _parseLine($line) 
 	{
-		$ll = explode(' --> ', $line);
-		$timeField = $ll[0];
-		$requestField = explode(' - ', $ll[1]);
-		$tileField = $requestField[0];
-		$clientField = $requestField[1];;
+		if (trim($line) == '') {
+			return false;
+		}
+		
+		$request = explode("\t", $line);
+		$trash = explode(' - ', $request[0]);
+		$datetime = $trash[0];
+		$trash = explode(' ', $datetime);
+		$date = $trash[0];
+		$referer = $request[4];
+		$ip = $request[5];
+		//este campo suele venir vacío porque
+		// generalmente no hay proxies involucrador en el request
+		// De hecho, muchois proxies ocultan la ip privada		
+		$private_ip = @$request[6];
 
-		$request = array();
-		$request['date'] = $this->_parseTimeField($timeField);
-		$request['client'] = $this->_parseClientField($clientField);
-		$request['tile'] = $this->_parseTileField($tileField);
-		return $request;
-	}
-
-	protected function _parseTimeField($text)
-	{
-		$a = explode(' - ', $text);
-		return $a[0];
-	}
-
-	protected function _parseClientField($text)
-	{
-		$a = explode(',', $text);
-		return array(
-			'referer' => $a[0],
-			'ip' => $a[1],			
-			'forwarded_for' => $a[2]
-
+		$ret = array();
+		$ret['date'] = $date;
+		$ret['tile'] = array(
+			'z'=>$request[1],
+			'x'=>$request[2],
+			'y'=>$request[3]
 		);
-		return $a;
-	}
+		$ret['referer'] = $referer;
+		$ret['ip'] = $ip;
+		$ret['private_ip'] = $private_ip;
 
-	protected function _parseTileField($text)
-	{
-		$ll = explode(' ', $text);
-		$ll = array(
-			'z'=>$ll[0],
-			'x'=>$ll[1],
-			'y'=>$ll[2]
-		);		
-		return $ll;
+		return $ret;
 	}
 
 	public function tutti()
