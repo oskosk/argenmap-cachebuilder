@@ -10,9 +10,9 @@ $app = new Slim( array(
 
 $app->get('/stats/ping', 'ping');
 $app->get('/stats/este_nodo_ping', 'este_nodo_ping');
-$app->get('/stats/estenodo/:datetime/requests/referers', 'requests_por_datetime_referers_este_nodo');
-$app->get('/stats/estenodo/:datetime/requests/resumen', 'requests_resumen_por_datetime_este_nodo');
-$app->get('/stats/estenodo/:datetime/requests', 'requests_por_datetime_este_nodo');
+$app->get('/stats/estenodo/:date/requests/referers', 'requests_por_date_referers_este_nodo');
+$app->get('/stats/estenodo/:date/requests', 'requests_resumen_por_date_este_nodo');
+$app->get('/stats/estenodo/requests', 'requests_este_nodo');
 $app->get('/stats/estenodo/ultimosrequests', 'ultimos_requests_este_nodo');
 $app->get('/stats/ultimosrequests', 'ultimos_requests');
 
@@ -52,35 +52,45 @@ function ultimos_requests() {
     echo json_encode($relaciones);
 }
 
-function requests_por_datetime_este_nodo($datetime)
+function requests_este_nodo()
 {
   global $CONFIG;
 
   $thisNode = $CONFIG['este_nodo_url'];
   $stats = new ArgenmapCacheStats();
-  $lines = $stats->requestsPorDateTime($datetime);
-  
-  $ret = array();
+  $log = $stats->_log();
+  $retAll = array();
+  foreach(array_keys($log['porDate']) as $date)
+  {
+    $lines = $stats->requestsPorDate($date);
+    $clientes = $stats->clientesPorDate($date);
 
-  $ret['este_nodo'] = $thisNode;
-  $ret['count'] = count($lines);
-  $ret['consumo_estimado'] = 8 * count($lines) . ' KB';
-  $ret['requests'] = $lines; 
-  
-  echo json_encode($ret);  
-  return json_encode($ret);
+    $ret = array();
+    $ret['este_nodo'] = $thisNode;
+    $ret['fecha'] = $date;
+    $ret['count'] = count($lines);
+    $ret['count_clientes'] = count($clientes);
+    //Asumo que cada tile pesa 8KB
+    //Tengo quecalcular un promedio real en base
+    // a los requests reales.
+    $ret['consumo_estimado'] = 8 * count($lines) . ' KB';
+    $ret['segundos'] = $stats->_segundosTotalesPorDate($date);  
 
+    $ret['ancho_de_banda_estimado'] = ( ( 8 * count($lines) ) /  $ret['segundos']). ' KB/S';
+    $retAll[] = $ret;  
+  } 
+  echo  json_encode($retAll);
 }
 
-function requests_resumen_por_datetime_este_nodo($datetime)
+function requests_resumen_por_date_este_nodo($date)
 {
   global $CONFIG;
 
   $thisNode = $CONFIG['este_nodo_url'];
   $stats = new ArgenmapCacheStats();
 
-  $lines = $stats->requestsPorDateTime($datetime);
-  $clientes = $stats->clientesPorDateTime($datetime);
+  $lines = $stats->requestsPorDate($date);
+  $clientes = $stats->clientesPorDate($date);
 
   $ret = array();
   $ret['este_nodo'] = $thisNode;
@@ -90,7 +100,7 @@ function requests_resumen_por_datetime_este_nodo($datetime)
   //Tengo quecalcular un promedio real en base
   // a los requests reales.
   $ret['consumo_estimado'] = 8 * count($lines) . ' KB';
-  $ret['segundos'] = $stats->_segundosTotalesPorDateTime($datetime);  
+  $ret['segundos'] = $stats->_segundosTotalesPorDate($date);  
 
   $ret['ancho_de_banda_estimado'] = ( ( 8 * count($lines) ) /  $ret['segundos']). ' KB/S';
     
