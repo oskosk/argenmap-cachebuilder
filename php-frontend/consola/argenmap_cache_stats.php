@@ -3,9 +3,9 @@ class ArgenmapCacheStats
 {
 	protected $LOG_DIR; 
 	protected $NLINES = 100;
-	protected $access_log_path;
+	protected $_access_log_path;
 	protected $_logLines;
-	protected $_logIndex;
+	protected $_logIndexed;
 
 	function __construct($NLINES=FALSE)
 	{
@@ -13,19 +13,24 @@ class ArgenmapCacheStats
 			$this->NLINES = $NLINES;
 		}
 		$this->LOG_DIR = dirname(dirname(__FILE__)) . "/tms/logs";
-		$this->access_log_path = $this->LOG_DIR . '/log.txt';
+		$this->_access_log_path = $this->LOG_DIR . '/log.txt';
 
 		
 	}
 
-	function _readLog()
+	function _log()
 	{
-		$this->_logLines = file($this->access_log_path);
-		$this->_indexLog($this->_logLines);
+		if (!$this->_logLines) {
+			$this->_logLines = file($this->_access_log_path);	
+			$this->_logIndexed = $this->_indexLog($this->_logLines);
+		}
+
+		return $this->_logIndexed;
 	}
 
 	function _indexLog(&$lines)
 	{
+		$ret = array();
 		foreach($lines as &$ll) {
 			if ($ll == '') {
 				continue;
@@ -48,8 +53,8 @@ class ArgenmapCacheStats
 			$ret['porDateTime'][$datetime][] = &$ll;
 
 		}	
-		$this->_logIndex = $ret;
-
+		
+		return $ret;
 	}
 	
 	function urls()
@@ -60,69 +65,60 @@ class ArgenmapCacheStats
 
 	function _urlsCrudos()
 	{
-	 	return shell_exec("awk -F'\t' '{print $2}' $this->access_log_path " 
+	 	return shell_exec("awk -F'\t' '{print $2}' $this->_access_log_path " 
 		. " | awk -F'?' '{print $1}' |sort|uniq");
 	}
 
-	function _segundosTotalesPorDateTime($datetime)
+	function _segundosTotalesPorDate($date)
 	{
-	 	$out = shell_exec("egrep '^$datetime' $this->LOG_DIR/log.txt "
-		. " |  awk -F' - ' '{print $1}'  |uniq |wc -l");		
-		
-		return trim($out);
+
+		if (! date_parse($date)) {
+			return false;
+		}
+		$log = $this->_log();
+
+		$requests = $this->_indexLog($log['porDate'][$date]);
+		$segundos = array_keys($requests['porDateTime']);
+
+		return count( $segundos );
 
 	}
 
-	public function referersPorDateTime($datetime)
+	public function requestsPorDate($date)
+	{
+		$requests = $this->_log();
+		return $requests['porDate'][$date];
+	}
+
+	public function referersPorDate($date)
 	{
 
-		if (! date_parse($datetime)) {
+		if (! date_parse($date)) {
 			return false;
 		}
-		$cmd = "egrep '^$datetime' $this->LOG_DIR/log.txt | awk -F'\t' '{print $3}'  |sort |uniq" ;
+		$log = $this->_log();
 
-		//$cmd = "egrep '^$datetime' $this->LOG_DIR/log.txt | awk -F' --> ' '{print $2}' "
-		//. " |awk -F' - ' '{print $2}' | awk -F',' '{print $1}' | awk -F'?' '{print $1}' |sort|uniq";
+		$requests = $this->_indexLog($log['porDate'][$date]);
+		$referers = array_keys($requests['porReferer']);
 
-		$lines =  shell_exec( $cmd ); 
-
-		$lines = explode("\n",  $lines);
-		$referers =  $lines;
 		return $referers;
 	}
 
-	public function clientesPorDateTime($datetime)
+	public function clientesPorDate($date)
 	{
-
-		if (! date_parse($datetime)) {
+		if (! date_parse($date)) {
 			return false;
 		}
-		$cmd = "egrep '^$datetime' $this->LOG_DIR/log.txt | awk -F'\t' '{print $4}' |sort|uniq";
-		
-		$lines =  shell_exec( $cmd ); 
+		$log = $this->_log();
 
-		$lines = explode("\n",  $lines);
-		$referers =  $lines;
-		return $referers;
+		$requests = $this->_indexLog($log['porDate'][$date]);
+		$clientes = array_keys($requests['porIP']);
+
+		return $clientes;
 	}
 	
 
-	public function requestsPorDateTime($datetime)
-	{
 
-		if (! date_parse($datetime)) {
-			return false;
-		}
-		$cmd = "egrep '^$datetime' $this->LOG_DIR/log.txt";
-
-		$lines = shell_exec($cmd);
-
-		$lines = explode("\n",  $lines);
-		$requests = array();		
-		$requests = array_map(array($this, '_parseLine'), $lines);
-		return $requests;
-
-	}
 	
 
 	public function ultimosRequests()
@@ -145,7 +141,7 @@ class ArgenmapCacheStats
 
 	public function stockChartData()
 	{
-		$lines = file($this->access_log_path);
+		$lines = file($this->_access_log_path);
 		
 		$chart_data = array();
 		$por_fecha = array();
@@ -242,7 +238,7 @@ class ArgenmapCacheStats
 
 	public function tutti()
 	{
-		$f = file($this->access_log_path);
+		$f = file($this->_access_log_path);
 		
 		foreach($f as $line) {
 			var_dump($this->_parseLine($line));
