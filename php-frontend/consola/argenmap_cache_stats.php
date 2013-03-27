@@ -36,11 +36,11 @@ class ArgenmapCacheStats
 			$trash = explode(' ', $datetime);
 			$date = $trash[0];
 			$referer = $request[4];
-			$ip = $cliente[5];
+			$ip = $request[5];
 			//este campo suele venir vacío porque
 			// generalmente no hay proxies involucrador en el request
 			// De hecho, muchois proxies ocultan la ip privada			
-			$private_ip = @$client[6];
+			$private_ip = @$request[6];
 
 			$ret['porReferer'][$referer][] = &$ll;
 			$ret['porIP'][$ip][] = &$ll;
