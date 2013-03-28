@@ -1,7 +1,9 @@
 # Archivo que uso para loggear el script
-log.txt
 *.pyc
 *.swp
 config.inc.php
-php-frontend/wms/cache
-php-frontend/tms/cache
+php-frontend/tms/logs/log.txt
+php-frontend/tms/logs/error.txt
+!php-frontend/tms/logs/LEEME
+php-frontend/tms/cache/*
+!php-frontend/tms/cache/LEEME

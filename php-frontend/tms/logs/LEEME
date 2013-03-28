@@ -1,0 +1,3 @@
+En este directorio se almacena los logs del fronend php del caché.
+log.txt - el registro de cada pedido de tile
+error.txt - el registro de cada error que el frontend php encuentra
