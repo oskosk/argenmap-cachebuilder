@@ -95,6 +95,27 @@ class Argenmap_Cache extends JG_Cache
         return TRUE;
     }
 
+    function traerTile($url)
+    {   
+        
+        $f = $this->getAndPassthru($url, CACHE_TTL);
+        
+        if ($f === false || strlen($f) == 0) {
+            $handler = curl_init($url);
+            curl_setopt($handler, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($handler, CURLOPT_FAILONERROR, true);
+            $f = curl_exec($handler);
+            if ( $f === false) {
+                return false;
+            }           
+            curl_close($handler);
+            $this->setRaw($url, $f);
+            $f = $this->getAndPassthru($url, CACHE_TTL);
+        }
+
+        return $f;
+    }    
+
     function LogError($s)
     {
        $this->error->LogError($s); 
