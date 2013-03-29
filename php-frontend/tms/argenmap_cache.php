@@ -126,4 +126,21 @@ class Argenmap_Cache extends JG_Cache
         $this->log->LogInfo($s);     
     }
 
+    function logTileServida($z, $x, $y)
+    {
+        $ip='';
+        $referer='';
+        $forwarded_for = '';
+        if(isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ){
+            $forwarded_for  = $_SERVER["HTTP_X_FORWARDED_FOR"];
+            $ip = $_SERVER["REMOTE_ADDR"];
+        } else {
+            $ip = $_SERVER["REMOTE_ADDR"];
+        }
+        if ( isset($_SERVER["HTTP_REFERER"]) ){
+            $referer = $_SERVER["HTTP_REFERER"];
+        }
+
+        $this->log->LogInfo("\t$z\t$x\t$y\t$referer\t$ip\t$forwarded_for");        
+    }
 }

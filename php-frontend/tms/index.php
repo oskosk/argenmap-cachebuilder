@@ -34,30 +34,12 @@ $tileURL = sprintf("%s/%s/%s/%s/%s.%s", $baseURL, $capa, $z, $x, $y,$format."8")
 //$tile = traerTile($tileURL) ;
 
 if ($cache->traerTile($tileURL) ) {
-	logIt($z, $x, $y);
+	$cache->logTileServida($z, $x, $y);
 } else {
 			$cache->LogError("\tNo se pudo leer la tile desde el servicio TMS remoto:\t%s\t%x\%y", $z, $x, $y);	
 }
 
 
-function logIt($z, $x, $y)
-{
-	global $cache;	
-	$ip='';
-	$referer='';
-	$forwarded_for = '';
-	if(isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ){
-  		$forwarded_for  = $_SERVER["HTTP_X_FORWARDED_FOR"];
-  		$ip = $_SERVER["REMOTE_ADDR"];
-	} else {
-  		$ip = $_SERVER["REMOTE_ADDR"];
-	}
-	if ( isset($_SERVER["HTTP_REFERER"]) ){
-  		$referer = $_SERVER["HTTP_REFERER"];
-	}
-
-	$cache->LogInfo("\t$z\t$x\t$y\t$referer\t$ip\t$forwarded_for");
-}
 
 
 
