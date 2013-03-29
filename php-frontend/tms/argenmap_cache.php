@@ -8,6 +8,7 @@ class Argenmap_Cache extends JG_Cache {
 
     public function getAndPassthru($key, $expiration = 3600)
     {
+        global $error;
 
         if ( !is_dir($this->dir) OR !is_writable($this->dir))
         {
@@ -36,7 +37,7 @@ class Argenmap_Cache extends JG_Cache {
 
         $cache = '';
 
-	$fsize = filesize($cache_path);
+	    $fsize = filesize($cache_path);
         if ( $fsize > 0)
         {
 	    header("Content-Type: image/png");
@@ -45,6 +46,7 @@ class Argenmap_Cache extends JG_Cache {
         }
         else
         {
+            $error->LogError("\tEl archivo del caché existe pero tiene 0 bytes");
             $cache = NULL;
         }
 

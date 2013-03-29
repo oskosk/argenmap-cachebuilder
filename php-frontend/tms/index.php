@@ -6,13 +6,17 @@ require('KLogger.php');
 // un año en segundos
 define('CACHE_TTL',  31536000);
 
-$q= $_GET['q']; 
+$log = new KLogger ( "logs/log.txt" , KLogger::DEBUG );
+$error = new KLogger ( "logs/error.txt" , KLogger::DEBUG );
+
+$q= @$_GET['q']; 
 
 $baseURL = 'http://mapa.ign.gob.ar/geoserver/gwc/service/tms/1.0.0';
 $tileURL = $baseURL;
 
 $pieces = explode('/', $q);
 if (count($pieces) != 4) {
+	$error->LogError("\tMALA_URL\t$_SERVER[QUERY_STRING]\t");
 	die('hard');
 }
 
@@ -28,12 +32,17 @@ $tileURL = sprintf("%s/%s/%s/%s/%s.%s", $baseURL, $capa, $z, $x, $y,$format."8")
 
 //$tile = traerTile($tileURL) ;
 
-traerTile($tileURL);
-logIt($z, $x, $y);
+if (traerTile($tileURL) ) {
+	logIt($z, $x, $y);
+} else {
+			$error->LogError("\tNo se pudo leer la tile desde el servicio TMS remoto:\t%s\t%x\%y", $z, $x, $y);	
+}
+
 
 function logIt($z, $x, $y)
 {
-	$log = new KLogger ( "logs/log.txt" , KLogger::DEBUG );
+	global $log, $error;
+	
 	$ip='';
 	$referer='';
 	$forwarded_for = '';
@@ -59,7 +68,11 @@ function traerTile($url)
 	if ($f === false || strlen($f) == 0) {
 		$handler = curl_init($url);
 		curl_setopt($handler, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($handler, CURLOPT_FAILONERROR, true);
 		$f = curl_exec($handler);
+		if ( $f === false) {
+			return false;
+		}			
 		curl_close($handler);
 		$cache->setRaw($url, $f);
 		$f = $cache->getAndPassthru($url, CACHE_TTL);
