@@ -4,11 +4,21 @@
 	
 	http://www.jongales.com/blog/2009/02/18/simple-file-based-php-cache-class/
 */	
-class Argenmap_Cache extends JG_Cache {
+class Argenmap_Cache extends JG_Cache
+{
+    private $log;
+    private $error;
+
+    function __construct($dir)
+    {
+        $this->log = new KLogger ( "logs/log.txt" , KLogger::DEBUG );
+        $this->error = new KLogger ( "logs/error.txt" , KLogger::DEBUG );
+        parent::__construct($dir); 
+    }
 
     public function getAndPassthru($key, $expiration = 3600)
     {
-        global $error;
+
 
         if ( !is_dir($this->dir) OR !is_writable($this->dir))
         {
@@ -46,7 +56,7 @@ class Argenmap_Cache extends JG_Cache {
         }
         else
         {
-            $error->LogError("\tEl archivo del caché existe pero tiene 0 bytes");
+            $this->error->LogError("\tEl archivo del caché existe pero tiene 0 bytes");
             $cache = NULL;
         }
 
@@ -83,6 +93,16 @@ class Argenmap_Cache extends JG_Cache {
         fclose($fp);
         @chmod($cache_path, 0777);
         return TRUE;
+    }
+
+    function LogError($s)
+    {
+       $this->error->LogError($s); 
+    }
+
+    function LogInfo($s)
+    {
+        $this->log->LogInfo($s);     
     }
 
 }

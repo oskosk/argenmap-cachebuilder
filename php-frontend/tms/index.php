@@ -1,13 +1,14 @@
 <?php
 
+require('KLogger.php');
 require('cache.php');
 require('argenmap_cache.php');
-require('KLogger.php');
+
 // un año en segundos
 define('CACHE_TTL',  31536000);
 
-$log = new KLogger ( "logs/log.txt" , KLogger::DEBUG );
-$error = new KLogger ( "logs/error.txt" , KLogger::DEBUG );
+$cache = new Argenmap_Cache('./cache');
+
 
 $q= @$_GET['q']; 
 
@@ -16,7 +17,7 @@ $tileURL = $baseURL;
 
 $pieces = explode('/', $q);
 if (count($pieces) != 4) {
-	$error->LogError("\tMALA_URL\t$_SERVER[QUERY_STRING]\t");
+	$cache->LogError("\tMALA_URL\t$_SERVER[QUERY_STRING]\t");
 	die('hard');
 }
 
@@ -35,14 +36,13 @@ $tileURL = sprintf("%s/%s/%s/%s/%s.%s", $baseURL, $capa, $z, $x, $y,$format."8")
 if (traerTile($tileURL) ) {
 	logIt($z, $x, $y);
 } else {
-			$error->LogError("\tNo se pudo leer la tile desde el servicio TMS remoto:\t%s\t%x\%y", $z, $x, $y);	
+			$cache->LogError("\tNo se pudo leer la tile desde el servicio TMS remoto:\t%s\t%x\%y", $z, $x, $y);	
 }
 
 
 function logIt($z, $x, $y)
 {
-	global $log, $error;
-	
+	global $cache;	
 	$ip='';
 	$referer='';
 	$forwarded_for = '';
@@ -56,12 +56,12 @@ function logIt($z, $x, $y)
   		$referer = $_SERVER["HTTP_REFERER"];
 	}
 
-	$log->LogInfo("\t$z\t$x\t$y\t$referer\t$ip\t$forwarded_for");
+	$cache->LogInfo("\t$z\t$x\t$y\t$referer\t$ip\t$forwarded_for");
 }
 
 function traerTile($url)
 {	
-	$cache = new Argenmap_Cache('./cache');
+	global $cache;
 	
 	$f = $cache->getAndPassthru($url, CACHE_TTL);
 	
