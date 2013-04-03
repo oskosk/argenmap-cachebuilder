@@ -31,7 +31,6 @@ $y=$y[0];
 //apendeo el 8 para pedir png8
 $tileURL = sprintf("%s/%s/%s/%s/%s.%s", $baseURL, $capa, $z, $x, $y,$format."8");
 
-//$tile = traerTile($tileURL) ;
 
 if ($cache->traerTile($tileURL) ) {
 	$cache->logTileServida($z, $x, $y);
