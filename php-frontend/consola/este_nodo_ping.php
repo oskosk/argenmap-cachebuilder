@@ -14,12 +14,13 @@ foreach ($lines as $ll) {
 	$private_ip = $ll['private_ip'];
 	
 	if ( $ip &&  $private_ip ) {
-		$private_ip = "IP privada N/D";
+		$tein_proxy = true;
 	}
+
 	if (! $ip ) {
 		$ip = "IP pública N/D. Raro";
 	}
-	$tein_proxy = ($private_ip != 'IP privada N/D');
+	
   	if ($referer) {
   		if ($tein_proxy) {
   			$uniq[] = "$referer -> Proxy $ip  {color:#218559, weight:2}";	
