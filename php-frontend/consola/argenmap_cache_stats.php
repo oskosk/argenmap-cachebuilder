@@ -37,7 +37,7 @@ class ArgenmapCacheStats
 			'porDate' => array(),
 			'porDateTime' => array()			
 		);
-		
+
 		if (count($lines) == 0 ) {
 			return $ret;
 		}		
@@ -45,23 +45,18 @@ class ArgenmapCacheStats
 			if ($ll == '') {
 				continue;
 			}
-			$request = explode("\t", $ll);
-			$trash = explode(' - ', $request[0]);
-			$datetime = $trash[0];
-			$trash = explode(' ', $datetime);
-			$date = $trash[0];
-			$referer = $request[4];
-			$ip = $request[5];
-			//este campo suele venir vacío porque
-			// generalmente no hay proxies involucrador en el request
-			// De hecho, muchois proxies ocultan la ip privada			
-			$private_ip = @$request[6];
+			$request = $this->_parseLine($ll);
+			
+			$date = $request['date'];
+			$datetime = $request['datetime'];
+			$referer = $request['referer'];
+			$ip = $request['ip'];
+			$private_ip = $request['private_ip'];
 
 			$ret['porReferer'][$referer][] = &$ll;
 			$ret['porIP'][$ip][] = &$ll;
 			$ret['porDate'][$date][] = &$ll;
 			$ret['porDateTime'][$datetime][] = &$ll;
-
 		}	
 		
 		return $ret;
@@ -240,6 +235,7 @@ class ArgenmapCacheStats
 
 		$ret = array();
 		$ret['date'] = $date;
+		$ret['datetime'] = $datetime;
 		$ret['tile'] = array(
 			'z'=>$request[1],
 			'x'=>$request[2],
