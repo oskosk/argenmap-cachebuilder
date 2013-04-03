@@ -18,7 +18,7 @@ class ArgenmapCacheStats
 		
 	}
 
-	function _log()
+	function _indexedLogLines()
 	{
 		if (!$this->_logLines) {
 			$this->_logLines = file($this->_access_log_path);	
@@ -75,7 +75,7 @@ class ArgenmapCacheStats
 		if (! date_parse($date)) {
 			return false;
 		}
-		$log = $this->_log();
+		$log = $this->_indexedLogLines();
 
 		$requests = $this->_indexLog($log['porDate'][$date]);
 		$segundos = array_keys($requests['porDateTime']);
@@ -86,7 +86,7 @@ class ArgenmapCacheStats
 
 	public function requestsPorDate($date)
 	{
-		$requests = $this->_log();
+		$requests = $this->_indexedLogLines();
 		return $requests['porDate'][$date];
 	}
 
@@ -96,7 +96,7 @@ class ArgenmapCacheStats
 		if (! date_parse($date)) {
 			return false;
 		}
-		$log = $this->_log();
+		$log = $this->_indexedLogLines();
 
 		$requests = $this->_indexLog($log['porDate'][$date]);
 		$referers = array_keys($requests['porReferer']);
@@ -109,7 +109,7 @@ class ArgenmapCacheStats
 		if (! date_parse($date)) {
 			return false;
 		}
-		$log = $this->_log();
+		$log = $this->_indexedLogLines());
 
 		$requests = $this->_indexLog($log['porDate'][$date]);
 		$clientes = array_keys($requests['porIP']);

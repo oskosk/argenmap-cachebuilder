@@ -58,7 +58,7 @@ function requests_este_nodo()
 
   $thisNode = $CONFIG['este_nodo_url'];
   $stats = new ArgenmapCacheStats();
-  $log = $stats->_log();
+  $log = $stats->_indexedLogLines();
   $retAll = array();
   foreach(array_keys($log['porDate']) as $date)
   {
