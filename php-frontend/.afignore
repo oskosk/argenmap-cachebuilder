@@ -1,0 +1,6 @@
+#ignore log. así no lo borra el update de AppFog
+tms/logs/log.txt
+tms/logs/error.txt
+tms/cache/*
+
+
