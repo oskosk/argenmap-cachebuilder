@@ -14,7 +14,7 @@ foreach ($lines as $ll) {
 	$referer = $ll['referer'];
 	$ip = $ll['ip'];
 	$private_ip = $ll['private_ip'];
-	var_dump($ll);
+
 	if ( $ip &&  $private_ip ) {
 		$tein_proxy = true;
 	}
