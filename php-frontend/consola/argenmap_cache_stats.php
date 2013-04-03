@@ -109,7 +109,7 @@ class ArgenmapCacheStats
 		if (! date_parse($date)) {
 			return false;
 		}
-		$log = $this->_indexedLogLines());
+		$log = $this->_indexedLogLines();
 
 		$requests = $this->_indexLog($log['porDate'][$date]);
 		$clientes = array_keys($requests['porIP']);
