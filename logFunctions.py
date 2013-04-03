@@ -1,5 +1,6 @@
 import datetime
 import sys
+import math
 '''
 FORMATO DE CADA LINEA DEL LOG:
 Separados por \t: fecha (0), z (1), y (2), x (3), referer (4), ip (5), ip proxy (6)
@@ -174,11 +175,11 @@ def cantReferersPorIntervalo(fechaInicio,fechaFin):
         fechaFin = aux
     
     for x in listaParseada:
-		fb = pasarFechaTime(x[0][:19].strip())
-		if fb >= fechaInicio and fb < fechaFin and x[4] not in listaReferers:
-			listaReferers.append(x[4])
-		if fb > fechaFin:
-			return len(listaReferers)
+        fb = pasarFechaTime(x[0][:19].strip())
+        if fb >= fechaInicio and fb < fechaFin and x[4] not in listaReferers:
+            listaReferers.append(x[4])
+        if fb > fechaFin:
+            return len(listaReferers)
     return len(listaReferers) 
 
 '''Recibe dos fechas en formato '####-##-## ##:##:##' y devuelve la 
@@ -194,16 +195,45 @@ def cantIPsPorIntervalo(fechaInicio,fechaFin):
         fechaFin = aux
     
     for x in listaParseada:
-		fb = pasarFechaTime(x[0][:19].strip())
-		if fb >= fechaInicio and fb < fechaFin and x[5] not in listaIPs:
-			listaIPs.append(x[5])
-		if fb > fechaFin:
-			return len(listaIPs)
+        fb = pasarFechaTime(x[0][:19].strip())
+        if fb >= fechaInicio and fb < fechaFin and x[5] not in listaIPs:
+            listaIPs.append(x[5])
+        if fb > fechaFin:
+            return len(listaIPs)
     return len(listaIPs) 
 
 
 
+def num2deg(xtile, ytile, zoom):
+	n = 2.0 ** zoom
+	lon_deg = xtile / n * 360.0 - 180.0
+	division = (1 - 2 * ytile / n)
+	try:
+		senh = math.sinh(math.pi * division)
+		lat_rad = math.atan(senh)
+		lat_deg = math.degrees(lat_rad)
+		return (lat_deg, lon_deg)
 
+	except OverflowError:
+		'''incalculable'''
+		return 0
+
+
+
+def pasarLogAdegrees ():
+    lista_tiles_en_degrees = []
+    for x in listaParseada:
+##        print (x[3], x[2], x[1])
+        esq_NW = num2deg(float(x[3]), float(x[2]), float(x[1]))
+        esq_NE = num2deg(float(x[3]), float(x[2])+1, float(x[1]))
+        esq_SE = num2deg(float(x[3])+1, float(x[2])+1 , float(x[1]))
+        esq_SW = num2deg(float(x[3])+1, float(x[2]), float(x[1]))
+        if (esq_NW != 0 and esq_SE != 0 and esq_NE!=0 and esq_SW!=0):
+            cuadrado = [esq_NW, esq_NE, esq_SE, esq_SW]
+            lista_tiles_en_degrees.append(cuadrado)
+    return lista_tiles_en_degrees
+		
+		
 #~FUNCION TEST 
 '''def print_test (booleano):
 	if booleano:
@@ -221,92 +251,91 @@ listaParseada = [x.split('\t') for x in a]
 #~ print_test (cantReferersPorIntervalo("2013-03-23 22:30:30", "2013-03-23 22:35:00")== 2)
 #~ print_test (cantIPsPorIntervalo("2013-03-23 22:26:05", "2013-03-23 22:31:28")== 3)
 
-
 #~ MANEJO DE LLAMADAS POR PARAMETRO
-
+#~ 
 #~ largo 13
-funciones = ["cantSegundos","cantSegundosPorFecha",
-"cantSegundosPorIntervalo","cantTilesPorFecha","cantTilesPorIntervalo",
-"traficoPorSegundo","pesoPorFecha", "pesoPorIntervalo","cantIPsPorFecha","cantIPs",
-"cantIPsPorIntervalo","cantReferers","cantReferersPorIntervalo"]
-
-if sys.argv[1] not in funciones:
-	print "ERROR: funcion no existe"
-else:
-	if sys.argv[1]==funciones[0]:
-		if len(sys.argv) ==2:
-			print cantSegundos()
-		else:
-			print "ERROR: cantidad de parametros erronea (debe recibir 0)"
-						
-	if sys.argv[1]==funciones[1]:
-		if len(sys.argv) ==3:
-			print cantSegundosPorFecha(sys.argv[2],sys.argv[3])
-		else:
-			print "ERROR: cantidad de parametros erronea (debe recibir 1)"
-						
-	if sys.argv[1]==funciones[2]:
-		if len(sys.argv) ==4:
-			print cantSegundosPorIntervalo(sys.argv[2],sys.argv[3])
-		else:
-			print "ERROR: cantidad de parametros erronea (debe recibir 2)"
-						
-	if sys.argv[1]==funciones[3]:
-		if len(sys.argv) ==3:
-			print cantTilesPorFecha(sys.argv[2])
-		else:
-			print "ERROR: cantidad de parametros erronea (debe recibir 1)"
-						
-	if sys.argv[1]==funciones[4]:
-		if len(sys.argv) ==4:
-			print cantTilesPorIntervalo(sys.argv[2],sys.argv[3])
-		else:
-			print "ERROR: cantidad de parametros erronea (debe recibir 2)"
-						
-	if sys.argv[1]==funciones[5]:
-		if len(sys.argv) ==3:
-			print traficoPorSegundo(sys.argv[2])
-		else:
-			print "ERROR: cantidad de parametros erronea (debe recibir 1)"
-						
-	if sys.argv[1]==funciones[6]:
-		if len(sys.argv) ==3:
-			print pesoPorFecha(sys.argv[2])
-		else:
-			print "ERROR: cantidad de parametros erronea (debe recibir 1)"
-						
-	if sys.argv[1]==funciones[7]:
-		if len(sys.argv) ==4:
-			print pesoPorIntervalo(sys.argv[2],sys.argv[3])
-		else:
-			print "ERROR: cantidad de parametros erronea (debe recibir 2)"
-						
-	if sys.argv[1]==funciones[8]:
-		if len(sys.argv) ==3:
-			print cantIPsPorFecha(sys.argv[2])
-		else:
-			print "ERROR: cantidad de parametros erronea (debe recibir 1)"
-			
-	if sys.argv[1]==funciones[9]:
-		if len(sys.argv) ==2:
-			print cantIPs()
-		else:
-			print "ERROR: cantidad de parametros erronea (debe recibir 0)"
-			
-	if sys.argv[1]==funciones[10]:
-		if len(sys.argv) ==4:
-			print cantIPsPorIntervalo(sys.argv[2],sys.argv[3])
-		else:
-			print "ERROR: cantidad de parametros erronea (debe recibir 2)"
-
-	if sys.argv[1]==funciones[11]:
-		if len(sys.argv) ==2:
-			print cantReferers()
-		else:
-			print "ERROR: cantidad de parametros erronea (debe recibir 0)"
-
-	if sys.argv[1]==funciones[12]:
-		if len(sys.argv) ==4:
-			print cantReferersPorIntervalo(sys.argv[2],sys.argv[3])
-		else:
-			print "ERROR: cantidad de parametros erronea (debe recibir 2)"
+#~ funciones = ["cantSegundos","cantSegundosPorFecha",
+#~ "cantSegundosPorIntervalo","cantTilesPorFecha","cantTilesPorIntervalo",
+#~ "traficoPorSegundo","pesoPorFecha", "pesoPorIntervalo","cantIPsPorFecha","cantIPs",
+#~ "cantIPsPorIntervalo","cantReferers","cantReferersPorIntervalo"]
+#~ 
+#~ if sys.argv[1] not in funciones:
+	#~ print "ERROR: funcion no existe"
+#~ else:
+	#~ if sys.argv[1]==funciones[0]:
+		#~ if len(sys.argv) ==2:
+			#~ print cantSegundos()
+		#~ else:
+			#~ print "ERROR: cantidad de parametros erronea (debe recibir 0)"
+						#~ 
+	#~ if sys.argv[1]==funciones[1]:
+		#~ if len(sys.argv) ==3:
+			#~ print cantSegundosPorFecha(sys.argv[2],sys.argv[3])
+		#~ else:
+			#~ print "ERROR: cantidad de parametros erronea (debe recibir 1)"
+						#~ 
+	#~ if sys.argv[1]==funciones[2]:
+		#~ if len(sys.argv) ==4:
+			#~ print cantSegundosPorIntervalo(sys.argv[2],sys.argv[3])
+		#~ else:
+			#~ print "ERROR: cantidad de parametros erronea (debe recibir 2)"
+						#~ 
+	#~ if sys.argv[1]==funciones[3]:
+		#~ if len(sys.argv) ==3:
+			#~ print cantTilesPorFecha(sys.argv[2])
+		#~ else:
+			#~ print "ERROR: cantidad de parametros erronea (debe recibir 1)"
+						#~ 
+	#~ if sys.argv[1]==funciones[4]:
+		#~ if len(sys.argv) ==4:
+			#~ print cantTilesPorIntervalo(sys.argv[2],sys.argv[3])
+		#~ else:
+			#~ print "ERROR: cantidad de parametros erronea (debe recibir 2)"
+						#~ 
+	#~ if sys.argv[1]==funciones[5]:
+		#~ if len(sys.argv) ==3:
+			#~ print traficoPorSegundo(sys.argv[2])
+		#~ else:
+			#~ print "ERROR: cantidad de parametros erronea (debe recibir 1)"
+						#~ 
+	#~ if sys.argv[1]==funciones[6]:
+		#~ if len(sys.argv) ==3:
+			#~ print pesoPorFecha(sys.argv[2])
+		#~ else:
+			#~ print "ERROR: cantidad de parametros erronea (debe recibir 1)"
+						#~ 
+	#~ if sys.argv[1]==funciones[7]:
+		#~ if len(sys.argv) ==4:
+			#~ print pesoPorIntervalo(sys.argv[2],sys.argv[3])
+		#~ else:
+			#~ print "ERROR: cantidad de parametros erronea (debe recibir 2)"
+						#~ 
+	#~ if sys.argv[1]==funciones[8]:
+		#~ if len(sys.argv) ==3:
+			#~ print cantIPsPorFecha(sys.argv[2])
+		#~ else:
+			#~ print "ERROR: cantidad de parametros erronea (debe recibir 1)"
+			#~ 
+	#~ if sys.argv[1]==funciones[9]:
+		#~ if len(sys.argv) ==2:
+			#~ print cantIPs()
+		#~ else:
+			#~ print "ERROR: cantidad de parametros erronea (debe recibir 0)"
+			#~ 
+	#~ if sys.argv[1]==funciones[10]:
+		#~ if len(sys.argv) ==4:
+			#~ print cantIPsPorIntervalo(sys.argv[2],sys.argv[3])
+		#~ else:
+			#~ print "ERROR: cantidad de parametros erronea (debe recibir 2)"
+#~ 
+	#~ if sys.argv[1]==funciones[11]:
+		#~ if len(sys.argv) ==2:
+			#~ print cantReferers()
+		#~ else:
+			#~ print "ERROR: cantidad de parametros erronea (debe recibir 0)"
+#~ 
+	#~ if sys.argv[1]==funciones[12]:
+		#~ if len(sys.argv) ==4:
+			#~ print cantReferersPorIntervalo(sys.argv[2],sys.argv[3])
+		#~ else:
+			#~ print "ERROR: cantidad de parametros erronea (debe recibir 2)"
