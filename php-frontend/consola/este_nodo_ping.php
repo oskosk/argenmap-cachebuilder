@@ -12,6 +12,7 @@ foreach ($lines as $ll) {
 	$referer = $ll['referer'];
 	$ip = $ll['ip'];
 	$private_ip = $ll['private_ip'];
+	
 	if ( $ip &&  $private_ip ) {
 		$private_ip = "IP privada N/D";
 	}
@@ -22,11 +23,11 @@ foreach ($lines as $ll) {
   	if ($referer) {
   		if ($tein_proxy) {
   			$uniq[] = "$referer -> Proxy $ip  {color:#218559, weight:2}";	
-			$uniq[] = "$thisNode -> Proxy $ip {color:#192823, weight:5}";
-			$uniq[] = "Proxy $ip -> $private_ip  {color:#D0C6B1, weight:2}";
+				$uniq[] = "$thisNode -> Proxy $ip {color:#192823, weight:5}";
+				$uniq[] = "Proxy $ip -> $private_ip  {color:#D0C6B1, weight:2}";
   		} else {
   			$uniq[] = "$referer -> $ip  {color:#218559, weight:2}";	
-			$uniq[] = "$thisNode -> $ip {color:#192823, weight:5}";
+				$uniq[] = "$thisNode -> $ip {color:#192823, weight:5}";
   		}
 		
 		$uniqnodes[] = "$referer {color:#218559} ";
