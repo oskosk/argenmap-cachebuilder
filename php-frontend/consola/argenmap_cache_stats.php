@@ -30,7 +30,17 @@ class ArgenmapCacheStats
 
 	function _indexLog(&$lines)
 	{
-		$ret = array();
+
+		$ret = array(
+			'porReferer' => array(),
+			'porIP' => array(),
+			'porDate' => array(),
+			'porDateTime' => array()			
+		);
+		
+		if (count($lines) == 0 ) {
+			return $ret;
+		}		
 		foreach($lines as &$ll) {
 			if ($ll == '') {
 				continue;
@@ -87,7 +97,13 @@ class ArgenmapCacheStats
 	public function requestsPorDate($date)
 	{
 		$requests = $this->_indexedLogLines();
-		return $requests['porDate'][$date];
+		if ( isset($requests['porDate'][$date]) ) {
+			return $requests['porDate'][$date];	
+		} else {
+			return array();
+		}
+
+		
 	}
 
 	public function referersPorDate($date)
