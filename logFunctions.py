@@ -175,11 +175,11 @@ def cantReferersPorIntervalo(fechaInicio,fechaFin):
         fechaFin = aux
     
     for x in listaParseada:
-		fb = pasarFechaTime(x[0][:19].strip())
-		if fb >= fechaInicio and fb < fechaFin and x[4] not in listaReferers:
-			listaReferers.append(x[4])
-		if fb > fechaFin:
-			return len(listaReferers)
+        fb = pasarFechaTime(x[0][:19].strip())
+        if fb >= fechaInicio and fb < fechaFin and x[4] not in listaReferers:
+            listaReferers.append(x[4])
+        if fb > fechaFin:
+            return len(listaReferers)
     return len(listaReferers) 
 
 '''Recibe dos fechas en formato '####-##-## ##:##:##' y devuelve la 
@@ -195,11 +195,11 @@ def cantIPsPorIntervalo(fechaInicio,fechaFin):
         fechaFin = aux
     
     for x in listaParseada:
-		fb = pasarFechaTime(x[0][:19].strip())
-		if fb >= fechaInicio and fb < fechaFin and x[5] not in listaIPs:
-			listaIPs.append(x[5])
-		if fb > fechaFin:
-			return len(listaIPs)
+        fb = pasarFechaTime(x[0][:19].strip())
+        if fb >= fechaInicio and fb < fechaFin and x[5] not in listaIPs:
+            listaIPs.append(x[5])
+        if fb > fechaFin:
+            return len(listaIPs)
     return len(listaIPs) 
 
 
@@ -212,25 +212,26 @@ def num2deg(xtile, ytile, zoom):
 		senh = math.sinh(math.pi * division)
 		lat_rad = math.atan(senh)
 		lat_deg = math.degrees(lat_rad)
-		print (lat_deg, lon_deg)
 		return (lat_deg, lon_deg)
 
 	except OverflowError:
-		print("incalculable")
+		'''incalculable'''
 		return 0
 
 
 
 def pasarLogAdegrees ():
-	lista_tiles_en_degrees = []
-	for x in listaParseada:
-		print (x[3], x[2], x[1])
-		esq_NW = num2deg(float(x[3]), float(x[2]), float(x[1]))
-		esq_SE = num2deg(float(x[3])+1, float(x[2])+1 , float(x[1]))
-		if (esq_NW != 0 and esq_SE != 0): 
-			cuadrado = [esq_NW, esq_SE]
-			lista_tiles_en_degrees.append(cuadrado)
-	return lista_tiles_en_degrees
+    lista_tiles_en_degrees = []
+    for x in listaParseada:
+##        print (x[3], x[2], x[1])
+        esq_NW = num2deg(float(x[3]), float(x[2]), float(x[1]))
+        esq_NE = num2deg(float(x[3]), float(x[2])+1, float(x[1]))
+        esq_SE = num2deg(float(x[3])+1, float(x[2])+1 , float(x[1]))
+        esq_SW = num2deg(float(x[3])+1, float(x[2]), float(x[1]))
+        if (esq_NW != 0 and esq_SE != 0 and esq_NE!=0 and esq_SW!=0):
+            cuadrado = [esq_NW, esq_NE, esq_SE, esq_SW]
+            lista_tiles_en_degrees.append(cuadrado)
+    return lista_tiles_en_degrees
 		
 		
 #~FUNCION TEST 
@@ -249,10 +250,6 @@ listaParseada = [x.split('\t') for x in a]
 
 #~ print_test (cantReferersPorIntervalo("2013-03-23 22:30:30", "2013-03-23 22:35:00")== 2)
 #~ print_test (cantIPsPorIntervalo("2013-03-23 22:26:05", "2013-03-23 22:31:28")== 3)
-num2deg(853, 653, 11)
-num2deg(853+1, 653, 11)
-num2deg(853+1, 653+1, 11)
-num2deg(853, 653+1, 11)
 
 #~ MANEJO DE LLAMADAS POR PARAMETRO
 #~ 
