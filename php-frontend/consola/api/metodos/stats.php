@@ -1,7 +1,7 @@
 <?php
 
 function stats_ping() {
-  global $CONFIG;
+  global $CONFIG, $app;
   
   //include('../este_nodo_ping.php');
   $relaciones = array();
@@ -14,13 +14,14 @@ function stats_ping() {
     $nodos = array_merge($nodos, $a['nodos']);
 
   }
+    $app->response()->header('Content-Type', 'application/json');
     echo json_encode($relaciones);
     echo json_encode($nodos);
 }
 
 
 function stats_ultimos_requests() {
-  global $CONFIG;
+  global $CONFIG, $app;
   
   //include('../este_nodo_ping.php');
   $requests = array();
@@ -32,12 +33,13 @@ function stats_ultimos_requests() {
     $requests = array_merge($relaciones, $a['requests']);
 
   }
+    $app->response()->header('Content-Type', 'application/json');
     echo json_encode($relaciones);
 }
 
 function stats_este_nodo_requests_por_date($date)
 {
-  global $CONFIG;
+  global $CONFIG, $app;
 
   $thisNode = $CONFIG['este_nodo_url'];
   $stats = new ArgenmapCacheStats();
@@ -47,6 +49,7 @@ function stats_este_nodo_requests_por_date($date)
   $segundos = $stats->_segundosTotalesPorDate($date);  
   
   if (count($lines) == 0 || count($clientes) == 0) {
+    $app->response()->header('Content-Type', 'application/json');
     echo json_encode(array());
     return;
   }
@@ -61,16 +64,17 @@ function stats_este_nodo_requests_por_date($date)
   $ret['consumo_estimado'] = 8 * count($lines) . ' KB';
   $ret['segundos'] = $segundos; 
   $ret['ancho_de_banda_estimado'] = ( ( 8 * count($lines) ) /  $ret['segundos']). ' KB/S';
-    
+  
+  $app->response()->header('Content-Type', 'application/json');  
   echo json_encode($ret);  
-  return json_encode($ret);
+  
 
 }
 
 
 function stats_estenodo_requests()
 {
-  global $CONFIG;
+  global $CONFIG, $app;
 
   $thisNode = $CONFIG['este_nodo_url'];
   $stats = new ArgenmapCacheStats();
@@ -95,12 +99,13 @@ function stats_estenodo_requests()
     $ret['ancho_de_banda_estimado'] = ( ( 8 * count($lines) ) /  $ret['segundos']). ' KB/S';
     $retAll[] = $ret;  
   } 
-  echo  json_encode($retAll);
+  $app->response()->header('Content-Type', 'application/json');
+  echo json_encode($retAll);
 }
 
 function stats_estenodo_ultimos_requests()
 {
-  global $CONFIG;
+  global $CONFIG, $app;
 
   $thisNode = $CONFIG['este_nodo_url'];
   $stats = new ArgenmapCacheStats();
@@ -112,47 +117,7 @@ function stats_estenodo_ultimos_requests()
 
   $ret['este_nodo'] = $thisNode;
   $ret['requests'] = $lines; 
-  
+
+  $app->response()->header('Content-Type', 'application/json');
   echo json_encode($ret);  
-  return json_encode($ret);
-
-  foreach ($lines as $ll) {
-    $referer = $ll['client']['referer'];
-    $ip = $ll['client']['ip'];
-    $private_ip = $ll['client']['forwarded_for'];
-    if ( $ip &&  $private_ip ) {
-      $private_ip = "IP privada N/D";
-    }
-    if (! $ip ) {
-      $ip = "IP pública N/D. Raro";
-    }
-    $tein_proxy = ($private_ip != 'IP privada N/D');
-      if ($referer) {
-        if ($tein_proxy) {
-          $uniq[] = "$referer -> Proxy $ip  {color:#218559, weight:2}"; 
-        $uniq[] = "$thisNode -> Proxy $ip {color:#192823, weight:5}";
-        $uniq[] = "Proxy $ip -> $private_ip  {color:#D0C6B1, weight:2}";
-        } else {
-          $uniq[] = "$referer -> $ip  {color:#218559, weight:2}"; 
-        $uniq[] = "$thisNode -> $ip {color:#192823, weight:5}";
-        }
-      
-      $uniqnodes[] = "$referer {color:#218559} ";
-    } else {
-      if ($tein_proxy) {
-        $uniq[] = "Proxy $ip -> $private_ip {color:red, weight:2}";
-        $uniq[] = "$thisNode -> Proxy $ip {color:red, weight:5}";
-      } else {
-        $uniq[] = "$thisNode -> $ip {color:red, weight:5}";
-      }
-    }
-    if ($tein_proxy) {
-      $uniqnodes[] = "Proxy $ip {color:#D0C6B1}";
-      $uniqnodes[] = "$private_ip {color:#EBB035}";
-    } else {
-      $uniqnodes[] = "$ip {color:#EBB035}";
-    }
-
-  }
-
 }
