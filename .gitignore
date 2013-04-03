@@ -5,5 +5,8 @@ config.inc.php
 php-frontend/tms/logs/log.txt
 php-frontend/tms/logs/error.txt
 !php-frontend/tms/logs/LEEME
+!php-frontend/tms/logs/.htaccess
 php-frontend/tms/cache/*
 !php-frontend/tms/cache/LEEME
+!php-frontend/tms/cache/.htaccess
+
