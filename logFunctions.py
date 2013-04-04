@@ -6,8 +6,10 @@ class Coordenada:
 	def __init__ (self, lat, lon):
 		self.lat = lat
 		self.lon = lon
-		
-	
+	def __str__(self):
+		return str(self.lat)+";"+ str(self.lon)
+
+
 	
 
 '''
@@ -212,9 +214,9 @@ def cantIPsPorIntervalo(fechaInicio,fechaFin):
     return len(listaIPs) 
 
 
-''' Recibe x, y, z una línea de log. Lo pasa a degrees y devuelve una
+''' Recibe x, y, z una linea de log. Lo pasa a degrees y devuelve una
 instancia de la clase Coordenada. Si x o y se salen de rango, atrapa el
-error, imprime "incalculable" y devuelve None.'''
+error y devuelve None.'''
 def num2deg(xtile, ytile, zoom):
 	
 	n = 2.0 ** zoom
@@ -232,19 +234,30 @@ def num2deg(xtile, ytile, zoom):
 		return None
 
 
-
+'''crea lista_tiles_en_degrees, que contiene diccionarios "cuadrado".
+Estos diccionarios tienen las keys NW, NE, SE, SW con valores de clase
+Coordenada, y la key zoom, con valor zoom (int)'''
 def pasarLogAdegrees ():
-    lista_tiles_en_degrees = []
-    for x in listaParseada:
-##        print (x[3], x[2], x[1])
-        esq_NW = num2deg(float(x[3]), float(x[2]), float(x[1]))
-        esq_NE = num2deg(float(x[3]), float(x[2])+1, float(x[1]))
-        esq_SE = num2deg(float(x[3])+1, float(x[2])+1 , float(x[1]))
-        esq_SW = num2deg(float(x[3])+1, float(x[2]), float(x[1]))
-        if (esq_NW != 0 and esq_SE != 0 and esq_NE!=0 and esq_SW!=0):
-            cuadrado = {'NW': esq_NW,'NE': esq_NE,'SE': esq_SE,'SW': esq_SW}
-            lista_tiles_en_degrees.append(cuadrado)
-    return lista_tiles_en_degrees
+	lista_tiles_en_degrees = []
+	for x in listaParseada:
+		esq_NW = num2deg(float(x[3]), float(x[2]), float(x[1]))
+		esq_NE = num2deg(float(x[3]), float(x[2])+1, float(x[1]))
+		esq_SE = num2deg(float(x[3])+1, float(x[2])+1 , float(x[1]))
+		esq_SW = num2deg(float(x[3])+1, float(x[2]), float(x[1]))
+		if (esq_NW != 0 and esq_SE != 0 and esq_NE!=0 and esq_SW!=0):
+			cuadrado = {'NW': esq_NW,'NE': esq_NE,'SE': esq_SE,'SW': esq_SW, 'zoom': int(x[1])}
+			lista_tiles_en_degrees.append(cuadrado)
+	return lista_tiles_en_degrees
+
+
+def ordenarCuadradosPorZoomEnUnDic (lista_tiles_en_degrees):
+	dicPorZoom = {}
+	for cuadrado in lista_tiles_en_degrees:
+		if cuadrado['zoom'] not in dicPorZoom.keys():
+			dicPorZoom[cuadrado['zoom']] = []
+		dicPorZoom[cuadrado['zoom']].append(cuadrado)
+	return dicPorZoom
+		
 		
 		
 #~FUNCION TEST 

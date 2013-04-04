@@ -1,7 +1,6 @@
 import logFunctions
 
 def crearArchivoXML(lista):
-    f=open("tiles.kml")
     print'<?xml version="1.0" encoding="UTF-8"?>'
     print'<kml xmlns="http://earth.google.com/kml/2.2">'
     print'<Document>'
@@ -19,11 +18,11 @@ def crearArchivoXML(lista):
 			print'\t','\t','\t','\t','\t','<LinearRing>'
 			print'\t','\t','\t','\t','\t','\t','<coordinates>'
 			
-			print'\t','\t','\t','\t','\t','\t','\t',str(i['NW'][1])+','+str(i['NW'][0])+',0'
-			print'\t','\t','\t','\t','\t','\t','\t',str(i['NE'][1])+','+str(i['NE'][0])+',0'
-			print'\t','\t','\t','\t','\t','\t','\t',str(i['SE'][1])+','+str(i['SE'][0])+',0'
-			print'\t','\t','\t','\t','\t','\t','\t',str(i['SW'][1])+','+str(i['SW'][0])+',0'
-			print'\t','\t','\t','\t','\t','\t','\t',str(i['NW'][1])+','+str(i['NW'][0])+',0'
+			print'\t','\t','\t','\t','\t','\t','\t',str(i['NW'].lon)+','+str(i['NW'].lat)+',0'
+			print'\t','\t','\t','\t','\t','\t','\t',str(i['NE'].lon)+','+str(i['NE'].lat)+',0'
+			print'\t','\t','\t','\t','\t','\t','\t',str(i['SE'].lon)+','+str(i['SE'].lat)+',0'
+			print'\t','\t','\t','\t','\t','\t','\t',str(i['SW'].lon)+','+str(i['SW'].lat)+',0'
+			print'\t','\t','\t','\t','\t','\t','\t',str(i['NW'].lon)+','+str(i['NW'].lat)+',0'
 
 			print'\t','\t','\t','\t','\t','\t','</coordinates>'
 			print'\t','\t','\t','\t','\t','</LinearRing>'
@@ -33,7 +32,7 @@ def crearArchivoXML(lista):
     print'\t','</Folder>'
     print'</Document>'
     print'</kml>'
-    f.close()
+
 
 
 ##a=[]
