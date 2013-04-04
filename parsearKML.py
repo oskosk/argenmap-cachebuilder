@@ -12,7 +12,7 @@ def crearArchivoXML(lista):
 		if i not in lista_sin_repetir:
 			lista_sin_repetir.append(i)
 			print'\t','\t','<Placemark>'
-			print'\t','\t','\t','<name>polygon'+str(lista.index(i))+'</name>'
+			print'\t','\t','\t','<name>polygon'+str(i['nombre'])+'</name>'
 			print'\t','\t','\t','<Polygon>'
 			print'\t','\t','\t','\t','<outerBoundaryIs>'
 			print'\t','\t','\t','\t','\t','<LinearRing>'
@@ -42,6 +42,10 @@ def crearArchivoXML(lista):
 ##b.append("obj1.2")
 ##a.append(b)
 listaTiles=logFunctions.pasarLogAdegrees()
+diccionarioZoom11 = logFunctions.ordenarCuadradosPorZoomEnUnDic(listaTiles)[11]
 crearArchivoXML(listaTiles)
     
-    
+#~ diccionarioPorZooms = logFunctions.ordenarCuadradosPorZoomEnUnDic(listaTiles)
+#~ for key in diccionarioPorZooms:
+	#~ crearArchivoXML(key)
+

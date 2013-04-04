@@ -240,16 +240,18 @@ Coordenada, y la key zoom, con valor zoom (int)'''
 def pasarLogAdegrees ():
 	lista_tiles_en_degrees = []
 	for x in listaParseada:
-		esq_NW = num2deg(float(x[3]), float(x[2]), float(x[1]))
-		esq_NE = num2deg(float(x[3]), float(x[2])+1, float(x[1]))
-		esq_SE = num2deg(float(x[3])+1, float(x[2])+1 , float(x[1]))
-		esq_SW = num2deg(float(x[3])+1, float(x[2]), float(x[1]))
+		esq_NW = num2deg(float(x[2]), float(x[3]), float(x[1]))
+		esq_NE = num2deg(float(x[2]), float(x[3])+1, float(x[1]))
+		esq_SE = num2deg(float(x[2])+1, float(x[3])+1 , float(x[1]))
+		esq_SW = num2deg(float(x[2])+1, float(x[3]), float(x[1]))
 		if (esq_NW != 0 and esq_SE != 0 and esq_NE!=0 and esq_SW!=0):
-			cuadrado = {'NW': esq_NW,'NE': esq_NE,'SE': esq_SE,'SW': esq_SW, 'zoom': int(x[1])}
+			cuadrado = {'NW': esq_NW,'NE': esq_NE,'SE': esq_SE,'SW': esq_SW, 'zoom': int(x[1]),'nombre': (x[2], x[3], x[1])}
 			lista_tiles_en_degrees.append(cuadrado)
 	return lista_tiles_en_degrees
 
-
+'''Recibe la lista de cuadrados que devuelve pasarLogAdegrees y la ordena
+por zoom en un diccionario. El diccionario queda tipo {zoom1: lista de cuadrados,
+zoom2: lista de cuadrados...}. Devuelve el diccionario'''
 def ordenarCuadradosPorZoomEnUnDic (lista_tiles_en_degrees):
 	dicPorZoom = {}
 	for cuadrado in lista_tiles_en_degrees:
