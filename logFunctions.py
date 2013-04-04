@@ -1,6 +1,15 @@
 import datetime
 import sys
 import math
+
+class Coordenada:
+	def __init__ (self, lat, lon):
+		self.lat = lat
+		self.lon = lon
+		
+	
+	
+
 '''
 FORMATO DE CADA LINEA DEL LOG:
 Separados por \t: fecha (0), z (1), y (2), x (3), referer (4), ip (5), ip proxy (6)
@@ -203,8 +212,11 @@ def cantIPsPorIntervalo(fechaInicio,fechaFin):
     return len(listaIPs) 
 
 
-
+''' Recibe x, y, z una línea de log. Lo pasa a degrees y devuelve una
+instancia de la clase Coordenada. Si x o y se salen de rango, atrapa el
+error, imprime "incalculable" y devuelve None.'''
 def num2deg(xtile, ytile, zoom):
+	
 	n = 2.0 ** zoom
 	lon_deg = xtile / n * 360.0 - 180.0
 	division = (1 - 2 * ytile / n)
@@ -212,11 +224,12 @@ def num2deg(xtile, ytile, zoom):
 		senh = math.sinh(math.pi * division)
 		lat_rad = math.atan(senh)
 		lat_deg = math.degrees(lat_rad)
-		return (lat_deg, lon_deg)
+		coord = Coordenada(lat_deg, lon_deg)
+		return coord
 
 	except OverflowError:
 		'''incalculable'''
-		return 0
+		return None
 
 
 
@@ -229,7 +242,7 @@ def pasarLogAdegrees ():
         esq_SE = num2deg(float(x[3])+1, float(x[2])+1 , float(x[1]))
         esq_SW = num2deg(float(x[3])+1, float(x[2]), float(x[1]))
         if (esq_NW != 0 and esq_SE != 0 and esq_NE!=0 and esq_SW!=0):
-            cuadrado = [esq_NW, esq_NE, esq_SE, esq_SW]
+            cuadrado = {'NW': esq_NW,'NE': esq_NE,'SE': esq_SE,'SW': esq_SW}
             lista_tiles_en_degrees.append(cuadrado)
     return lista_tiles_en_degrees
 		
