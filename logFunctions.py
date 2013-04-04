@@ -1,6 +1,7 @@
 import datetime
 import sys
 import math
+import globalmaptiles
 
 class Coordenada:
 	def __init__ (self, lat, lon):
@@ -214,24 +215,24 @@ def cantIPsPorIntervalo(fechaInicio,fechaFin):
     return len(listaIPs) 
 
 
-''' Recibe x, y, z una linea de log. Lo pasa a degrees y devuelve una
-instancia de la clase Coordenada. Si x o y se salen de rango, atrapa el
-error y devuelve None.'''
-def num2deg(xtile, ytile, zoom):
-	
-	n = 2.0 ** zoom
-	lon_deg = xtile / n * 360.0 - 180.0
-	division = (1 - 2 * ytile / n)
-	try:
-		senh = math.sinh(math.pi * division)
-		lat_rad = math.atan(senh)
-		lat_deg = math.degrees(lat_rad)
-		coord = Coordenada(lat_deg, lon_deg)
-		return coord
-
-	except OverflowError:
-		'''incalculable'''
-		return None
+#~ ''' Recibe x, y, z una linea de log. Lo pasa a degrees y devuelve una
+#~ instancia de la clase Coordenada. Si x o y se salen de rango, atrapa el
+#~ error y devuelve None.'''
+#~ def num2deg(xtile, ytile, zoom):
+	#~ 
+	#~ n = 2.0 ** zoom
+	#~ lon_deg = (xtile / n) * 360.0 - 180.0
+	#~ division = (1 - 2 * ytile / n)
+	#~ try:
+		#~ senh = math.sinh(math.pi * division)
+		#~ lat_rad = math.atan(senh)
+		#~ lat_deg = math.degrees(lat_rad)
+		#~ coord = Coordenada(lat_deg, lon_deg)
+		#~ return coord
+#~ 
+	#~ except OverflowError:
+		#~ '''incalculable'''
+		#~ return None
 
 
 '''crea lista_tiles_en_degrees, que contiene diccionarios "cuadrado".
@@ -240,13 +241,15 @@ Coordenada, y la key zoom, con valor zoom (int)'''
 def pasarLogAdegrees ():
 	lista_tiles_en_degrees = []
 	for x in listaParseada:
-		esq_NW = num2deg(float(x[2]), float(x[3]), float(x[1]))
-		esq_NE = num2deg(float(x[2]), float(x[3])+1, float(x[1]))
-		esq_SE = num2deg(float(x[2])+1, float(x[3])+1 , float(x[1]))
-		esq_SW = num2deg(float(x[2])+1, float(x[3]), float(x[1]))
-		if (esq_NW != 0 and esq_SE != 0 and esq_NE!=0 and esq_SW!=0):
-			cuadrado = {'NW': esq_NW,'NE': esq_NE,'SE': esq_SE,'SW': esq_SW, 'zoom': int(x[1]),'nombre': (x[2], x[3], x[1])}
-			lista_tiles_en_degrees.append(cuadrado)
+		tileBounds = globalmaptiles.GlobalMercator()
+		bounds = tileBounds.TileLatLonBounds(float(x[2]), float(x[3]), float(x[1])) # tupla
+		#~ ( minLat, minLon, maxLat, maxLon )
+		esq_NW = Coordenada(bounds[2], bounds[1]) # maxLat y MinLon
+		esq_SW = Coordenada(bounds[0], bounds[1]) # minLat y MinLon
+		esq_NE = Coordenada(bounds[2], bounds[3]) # maxLat y MaxLon
+		esq_SE = Coordenada(bounds[0], bounds[3]) # minLat y MaxLon
+		cuadrado = {'NW': esq_NW,'SW': esq_SW,'NE': esq_NE,'SE': esq_SE, 'zoom': int(x[1]),'nombre': (x[2], x[3], x[1])}
+		lista_tiles_en_degrees.append(cuadrado)
 	return lista_tiles_en_degrees
 
 '''Recibe la lista de cuadrados que devuelve pasarLogAdegrees y la ordena
@@ -262,6 +265,12 @@ def ordenarCuadradosPorZoomEnUnDic (lista_tiles_en_degrees):
 		
 		
 		
+f = open('log.txt')
+a = f.readlines()
+f.close()
+listaParseada = [x.split('\t') for x in a]
+
+
 #~FUNCION TEST 
 '''def print_test (booleano):
 	if booleano:
@@ -270,11 +279,6 @@ def ordenarCuadradosPorZoomEnUnDic (lista_tiles_en_degrees):
 		print 'ERROR'
 	return 0
 '''
-#~ PRUEBAS 
-f = open('log.txt')
-a = f.readlines()
-f.close()
-listaParseada = [x.split('\t') for x in a]
 
 #~ print_test (cantReferersPorIntervalo("2013-03-23 22:30:30", "2013-03-23 22:35:00")== 2)
 #~ print_test (cantIPsPorIntervalo("2013-03-23 22:26:05", "2013-03-23 22:31:28")== 3)
