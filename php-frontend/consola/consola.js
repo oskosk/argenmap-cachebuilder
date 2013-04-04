@@ -16,8 +16,10 @@
   clear_timeout = null;
   old_data = '';
   actualizar = function () {
-  	$.get("api/stats/ping", function(data){
-      $('#code').val(data);
+  	$.get("../api/stats/ultimosrequests", function(data){
+      
+      var texto = convertirDataATextoArborJS(data);
+      $('#code').val(texto);
       that.updateGraph();
       tid = setTimeout(actualizar,1000);
 	});
@@ -166,3 +168,72 @@
 
   
 })()
+
+function convertirDataATextoArborJS(data)
+{
+  var uniq = [];
+  var uniqnodes = [];
+
+  for (var ii=0; ii<data.length; ii++) {
+    var este_nodo = data[ii].este_nodo;
+    for (var jj=0; jj<data[ii].requests.length; jj++) {
+
+      var request = data[ii].requests[jj];
+      var tein_proxy = false;
+      var referer = request.referer;
+      var ip = request.ip;
+      var private_ip = request.private_ip;
+
+      if (ip && private_ip) {
+        tein_proxy = true;
+      }
+
+      if (!ip ) {
+        ip = 'IP Pública N/D. Raro';
+      }
+
+      if (referer) {
+        if (tein_proxy) {
+          uniq.push(
+            referer + " -> Proxy "+ip+"  {color:#218559, weight:2}", 
+            este_nodo + " -> Proxy "+ip+" {color:#192823, weight:5}",
+            "Proxy " + ip + " -> "+private_ip+"  {color:#D0C6B1, weight:2}"
+          );
+        } else {
+          uniq.push(
+            referer + " -> "+ip+"  {color:#218559, weight:2}",
+            este_nodo + " -> "+ip+" {color:#192823, weight:5}"
+          );
+        }
+
+        uniqnodes.push(referer + " {color:#218559}");
+      } else {
+        if (tein_proxy) {
+          uniq.push(
+            "Proxy " + ip + " -> "+private_ip+" {color:red, weight:2}",
+            este_nodo + " -> Proxy "+ip+" {color:red, weight:5}"
+          );
+        } else {
+          uniq.push(este_nodo + " -> "+ip+" {color:red, weight:5}");
+        }
+      }
+      if (tein_proxy) {
+        uniqnodes.push(
+          "Proxy "+ip+" {color:#D0C6B1}",
+          private_ip+" {color:#EBB035}"
+        );
+      } else {
+        uniqnodes.push(ip+" {color:#EBB035}");
+      }
+    }
+    uniqnodes.push( este_nodo + " {color:#192823}");
+  }
+
+  uniq = uniq.sort().filter(function(el,i,a){return i==a.indexOf(el);})
+  uniqnodes = uniqnodes.sort().filter(function(el,i,a){return i==a.indexOf(el);})
+  var texto = uniqnodes.join("\n");
+  var texto = texto + uniq.join("\n");
+
+  return texto;  
+  
+}

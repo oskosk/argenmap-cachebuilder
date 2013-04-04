@@ -20,22 +20,7 @@ function stats_ping() {
 }
 
 
-function stats_ultimos_requests() {
-  global $CONFIG, $app;
-  
-  //include('../este_nodo_ping.php');
-  $requests = array();
-  $nodos = array();
-  $nodos_url = $CONFIG['otros_nodos_url'];
-  $nodos_url[] = $CONFIG['este_nodo_url'];
-  foreach ($nodos_url as $url) {
-    $a = json_decode(file_get_contents($url . '/consola/api/stats/estenodo/ultimosrequests'),true);
-    $requests = array_merge($relaciones, $a['requests']);
 
-  }
-    $app->response()->header('Content-Type', 'application/json');
-    echo json_encode($relaciones);
-}
 
 function stats_este_nodo_requests_por_date($date)
 {
@@ -103,7 +88,26 @@ function stats_estenodo_requests()
   echo json_encode($retAll);
 }
 
-function stats_estenodo_ultimos_requests()
+function stats_ultimos_requests() {
+  global $CONFIG, $app;
+  
+  $requests = array();
+  $nodos = array();
+  $nodos_url = $CONFIG['otros_nodos_url'];
+  $requests[] = stats_estenodo_ultimos_requests(true);
+  foreach ($nodos_url as $url) {
+    $remote = file_get_contents($url . '/consola/api/stats/estenodo/ultimosrequests');
+
+    $a = json_decode($remote,true);
+
+    $requests[] = $a;
+
+  }
+    $app->response()->header('Content-Type', 'application/json');
+    echo json_encode($requests);
+}
+
+function stats_estenodo_ultimos_requests($dont_echo=false)
 {
   global $CONFIG, $app;
 
@@ -119,5 +123,10 @@ function stats_estenodo_ultimos_requests()
   $ret['requests'] = $lines; 
 
   $app->response()->header('Content-Type', 'application/json');
-  echo json_encode($ret);  
+  if ( $dont_echo === false ) {
+    echo json_encode($ret);    
+  } else{
+    return $ret;
+  }
+  
 }
