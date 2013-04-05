@@ -1,7 +1,7 @@
 import string
 import os
 
-def crearArchivoXML(lista, nro_zoom, folder):
+def crearArchivoXML(lista, nro_zoom, folder, color):
 	os.chdir(folder)
 	nombre = 'tiles'+str(nro_zoom)+'.kml'
 	f = open (nombre, "w")
