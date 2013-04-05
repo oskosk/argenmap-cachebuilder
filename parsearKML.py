@@ -1,19 +1,20 @@
 import string
+import os
 
-
-def crearArchivoXML(lista, nro_zoom):
-    nombre = 'tiles'+str(nro_zoom)+'.kml'
-    f = open (nombre, "w")
-    f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
-    f.write('<kml xmlns="http://earth.google.com/kml/2.2">\n')
-    f.write('<Document>\n')
-    f.write('\t<name>')
-    f.write(nombre)
-    f.write('</name>\n')
-    f.write('\t<Folder>\n')
-    f.write('\t\t<name>toptiles</name>\n')
-    lista_sin_repetir = []
-    for i in lista:
+def crearArchivoXML(lista, nro_zoom, folder):
+	os.chdir(folder)
+	nombre = 'tiles'+str(nro_zoom)+'.kml'
+	f = open (nombre, "w")
+	f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+	f.write('<kml xmlns="http://earth.google.com/kml/2.2">\n')
+	f.write('<Document>\n')
+	f.write('\t<name>')
+	f.write(nombre)
+	f.write('</name>\n')
+	f.write('\t<Folder>\n')
+	f.write('\t\t<name>toptiles</name>\n')
+	lista_sin_repetir = []
+	for i in lista:
 		if i not in lista_sin_repetir:
 			lista_sin_repetir.append(i)
 			f.write('\t\t<Placemark>\n')
@@ -57,24 +58,24 @@ def crearArchivoXML(lista, nro_zoom):
 			f.write('\t\t\t\t</outerBoundaryIs>\n')
 			f.write('\t\t\t</Polygon>\n')
 			#~ STYLE 
-			#~ f.write('\t\t\t<Style>\n')
-			#~ f.write('\t\t\t\t<PolyStyle>\n')
-			#~ f.write('\t\t\t\t\t<color>')
-			#~ f.write(color)
-			#~ f.write('</color>\n')
-			#~ f.write('\t\t\t\t<outline>0</outline>\n')
-			#~ f.write('\t\t\t\t</PolyStyle>\n')
-			#~ f.write('\t\t\t</Style>\n')
 			f.write('\t\t\t<Style>\n')
 			f.write('\t\t\t\t<PolyStyle>\n')
-			f.write('\t\t\t\t\t<color>7fffffff</color>\n')
-			f.write('\t\t\t\t\t<colorMode>random</colorMode>\n')
+			f.write('\t\t\t\t\t<color>')
+			f.write(color)
+			f.write('</color>\n')
 			f.write('\t\t\t\t<outline>0</outline>\n')
 			f.write('\t\t\t\t</PolyStyle>\n')
 			f.write('\t\t\t</Style>\n')
+			#~ f.write('\t\t\t<Style>\n')
+			#~ f.write('\t\t\t\t<PolyStyle>\n')
+			#~ f.write('\t\t\t\t\t<color>7fffffff</color>\n')
+			#~ f.write('\t\t\t\t\t<colorMode>random</colorMode>\n')
+			#~ f.write('\t\t\t\t<outline>0</outline>\n')
+			#~ f.write('\t\t\t\t</PolyStyle>\n')
+			#~ f.write('\t\t\t</Style>\n')
 			#~ FIN STYLE
 			f.write('\t\t</Placemark>\n')
-    f.write('\t</Folder>\n')
-    f.write('</Document>\n')
-    f.write('</kml>\n')
-    f.close()
+	f.write('\t</Folder>\n')
+	f.write('</Document>\n')
+	f.write('</kml>\n')
+	f.close()
