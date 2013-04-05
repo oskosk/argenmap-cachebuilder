@@ -215,24 +215,34 @@ def cantIPsPorIntervalo(fechaInicio,fechaFin):
     return len(listaIPs) 
 
 
-#~ ''' Recibe x, y, z una linea de log. Lo pasa a degrees y devuelve una
-#~ instancia de la clase Coordenada. Si x o y se salen de rango, atrapa el
-#~ error y devuelve None.'''
-#~ def num2deg(xtile, ytile, zoom):
-	#~ 
-	#~ n = 2.0 ** zoom
-	#~ lon_deg = (xtile / n) * 360.0 - 180.0
-	#~ division = (1 - 2 * ytile / n)
-	#~ try:
-		#~ senh = math.sinh(math.pi * division)
-		#~ lat_rad = math.atan(senh)
-		#~ lat_deg = math.degrees(lat_rad)
-		#~ coord = Coordenada(lat_deg, lon_deg)
-		#~ return coord
-#~ 
-	#~ except OverflowError:
-		#~ '''incalculable'''
-		#~ return None
+'''crea lista_tiles_en_degrees POR INTERVALO, que contiene diccionarios "cuadrado".
+Estos diccionarios tienen las keys NW, NE, SE, SW con valores de clase
+Coordenada, y la key zoom, con valor zoom (int)'''
+def pasarLogAdegreesPorIntervalo (fechaInicio, fechaFin):
+	fechaInicio = pasarFechaTime(fechaInicio)
+	fechaFin = pasarFechaTime(fechaFin)
+	'''swapea las fechas por si estan desordenadas '''
+	if fechaInicio > fechaFin:
+		aux = fechaInicio
+		fechaInicio = fechaFin
+		fechaFin = aux
+
+	lista_tiles_en_degrees = []
+	for x in listaParseada:
+		fb = pasarFechaTime(x[0][:19].strip())
+		if fb >= fechaInicio and fb < fechaFin:
+			tileBounds = globalmaptiles.GlobalMercator()
+			bounds = tileBounds.TileLatLonBounds(float(x[2]), float(x[3]), float(x[1])) # tupla
+			#~ ( minLat, minLon, maxLat, maxLon )
+			esq_NW = Coordenada(bounds[2], bounds[1]) # maxLat y MinLon
+			esq_SW = Coordenada(bounds[0], bounds[1]) # minLat y MinLon
+			esq_NE = Coordenada(bounds[2], bounds[3]) # maxLat y MaxLon
+			esq_SE = Coordenada(bounds[0], bounds[3]) # minLat y MaxLon
+			cuadrado = {'NW': esq_NW,'SW': esq_SW,'NE': esq_NE,'SE': esq_SE, 'zoom': int(x[1]),'nombre': (x[2], x[3], x[1])}
+			lista_tiles_en_degrees.append(cuadrado)
+		if fb > fechaFin:
+			return lista_tiles_en_degrees
+	return lista_tiles_en_degrees
 
 
 '''crea lista_tiles_en_degrees, que contiene diccionarios "cuadrado".
