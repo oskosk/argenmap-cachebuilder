@@ -49,15 +49,30 @@ def pesoPorIntervalo(fechaIncio,fechaFin):
     '''devuelve el trafico por intervalo'''
     return pesoPorIntervalo(fechaIncio,fechaFin)/cantSegundosPorIntervalo(fechaIncio,fechaFin)
 
+
 def pasarFechaTime(fecha):
-    '''recibe una fecha en formato '####-##-## ##:##:##' y devuelve un objeto tipo datetime'''
-    if fecha[12] == ':':
-        fecha = fecha[:11]+'0'+fecha[11:]
-    return datetime.datetime(int(fecha[:4]),int(fecha[5:7]),int(fecha[8:10]),int(fecha[11:13]),int(fecha[14:16]),int(fecha[17:19]))
+	'''recibe una fecha en formato '####-##-## ##:##:##' y devuelve un objeto tipo datetime'''
+	try:
+		if fecha[12] == ':':
+			fecha = fecha[:11]+'0'+fecha[11:]
+		return datetime.datetime(int(fecha[:4]),int(fecha[5:7]),int(fecha[8:10]),int(fecha[11:13]),int(fecha[14:16]),int(fecha[17:19]))
+	except IndexError:
+		return False
+	except TypeError:
+		return False
+	except ValueError:
+		return False
 
 def pasarFecha(fecha):
-    '''recibe una fecha en formato '####-##-##' y devuelve un objeto tipo date'''
-    return datetime.date(int(fecha[:4]),int(fecha[5:7]),int(fecha[8:10]))
+	'''recibe una fecha en formato '####-##-##' y devuelve un objeto tipo date'''
+	try:
+		return datetime.date(int(fecha[:4]),int(fecha[5:7]),int(fecha[8:10]))
+	except IndexError:
+		return False
+	except TypeError:
+		return False
+	except ValueError:
+		return False
 
 def cantTilesPorFecha(fecha):
     ''' devuelve la cantidad de lineas de log (tiles) por fecha (dia)'''
@@ -74,6 +89,8 @@ def cantTilesPorFecha(fecha):
 
 def cantSegundosPorFecha(fecha):
     '''devuelve la cantidad de segundos/momentos distintos por fecha (dia)'''
+    if not fechaInicio or not fechaFin:
+		return False
     listaFecha=[]
     corte=False
     for x in listaParseada:
@@ -91,6 +108,8 @@ def cantSegundosPorIntervalo(fechaInicio,fechaFin):
     listaFecha=[]
     fechaInicio=pasarFechaTime(fechaInicio)
     fechaFin=pasarFechaTime(fechaFin)
+    if not fechaInicio or not fechaFin:
+		return False
     '''swapea las fechas por si estan desordenadas '''
     if fechaInicio > fechaFin:
         aux = fechaInicio
@@ -111,6 +130,8 @@ def cantTilesPorIntervalo(fechaInicio,fechaFin):
     c=0
     fechaInicio=pasarFechaTime(fechaInicio)
     fechaFin=pasarFechaTime(fechaFin)
+    if not fechaInicio or not fechaFin:
+		return False
     '''swapea las fechas por si estan desordenadas '''
     if fechaInicio > fechaFin:
         aux = fechaInicio
@@ -180,6 +201,8 @@ def cantReferersPorIntervalo(fechaInicio,fechaFin):
     listaReferers=[]
     fechaInicio=pasarFechaTime(fechaInicio)
     fechaFin=pasarFechaTime(fechaFin)
+    if not fechaInicio or not fechaFin:
+		return False
     '''swapea las fechas por si estan desordenadas '''
     if fechaInicio > fechaFin:
         aux = fechaInicio
@@ -200,6 +223,8 @@ def cantIPsPorIntervalo(fechaInicio,fechaFin):
     listaIPs=[]
     fechaInicio=pasarFechaTime(fechaInicio)
     fechaFin=pasarFechaTime(fechaFin)
+    if not fechaInicio or not fechaFin:
+		return False
     '''swapea las fechas por si estan desordenadas '''
     if fechaInicio > fechaFin:
         aux = fechaInicio
@@ -221,6 +246,8 @@ Coordenada, y la key zoom, con valor zoom (int)'''
 def pasarLogAdegreesPorIntervalo (fechaInicio, fechaFin):
 	fechaInicio = pasarFechaTime(fechaInicio)
 	fechaFin = pasarFechaTime(fechaFin)
+	if not fechaInicio or not fechaFin:
+		return False
 	'''swapea las fechas por si estan desordenadas '''
 	if fechaInicio > fechaFin:
 		aux = fechaInicio
