@@ -66,14 +66,7 @@ def crearArchivoXML(lista, nro_zoom, folder, color):
 			f.write('\t\t\t\t<outline>0</outline>\n')
 			f.write('\t\t\t\t</PolyStyle>\n')
 			f.write('\t\t\t</Style>\n')
-			#~ f.write('\t\t\t<Style>\n')
-			#~ f.write('\t\t\t\t<PolyStyle>\n')
-			#~ f.write('\t\t\t\t\t<color>7fffffff</color>\n')
-			#~ f.write('\t\t\t\t\t<colorMode>random</colorMode>\n')
-			#~ f.write('\t\t\t\t<outline>0</outline>\n')
-			#~ f.write('\t\t\t\t</PolyStyle>\n')
-			#~ f.write('\t\t\t</Style>\n')
-			#~ FIN STYLE
+
 			f.write('\t\t</Placemark>\n')
 	f.write('\t</Folder>\n')
 	f.write('</Document>\n')

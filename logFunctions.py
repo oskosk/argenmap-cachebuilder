@@ -52,7 +52,7 @@ def pasarFecha(fecha):
 ''' devuelve la cantidad de lineas de log (tiles) por fecha (dia)'''
 def cantTilesPorFecha(fecha):
 	if pasarFecha(fecha) == False:
-		return False
+		return None
 	c=0
 	corte=False
 	for x in listaParseada:
@@ -68,7 +68,7 @@ def cantTilesPorFecha(fecha):
 '''devuelve la cantidad de segundos/momentos distintos por fecha (dia)'''
 def cantSegundosPorFecha(fecha):
 	if pasarFecha(fecha) == False:
-		return False
+		return None
 	listaFecha=[]
 	corte=False
 	for x in listaParseada:
@@ -141,8 +141,8 @@ def cantSegundos():
 llamando a cantTilesPorFecha'''
 def pesoPorFecha(fecha):
 	cantTiles =cantTilesPorFecha(fecha)
-	if not cantTiles:
-		return False
+	if cantTiles== None:
+		return None
 	return 8*cantTiles
 
 
@@ -150,8 +150,8 @@ def pesoPorFecha(fecha):
 de bytes aprox (x8) de trafico en el intervalo llamando a cantTilesPorIntervalo'''
 def pesoPorIntervalo(fechaInicio,fechaFin):
 	cantTiles = cantTilesPorIntervalo(fechaInicio,fechaFin)
-	if not cantTiles:
-		return False
+	if cantTiles==None:
+		return None
 	return 8*cantTiles
 
 '''devuelve la cantidad de IPs distintos por fecha (dia)'''
@@ -303,17 +303,7 @@ f.close()
 listaParseada = [x.split('\t') for x in a]
 
 
-#~FUNCION TEST 
-#~ def print_test (booleano):
-	#~ if booleano:
-		#~ print 'OK'
-	#~ else:
-		#~ print 'ERROR'
-	#~ return 0
 
-
-#~ print_test (cantReferersPorIntervalo("2013-03-23 22:30:30", "2013-03-23 22:35:00")== 2)
-#~ print_test (cantIPsPorIntervalo("2013-03-23 22:26:05", "2013-03-23 22:31:28")== 3)
 
 #~ MANEJO DE LLAMADAS POR PARAMETRO
 
@@ -331,7 +321,7 @@ if sys.argv[1]==funciones[0]:
 if sys.argv[1]==funciones[1]:
 	if len(sys.argv) ==3:
 		ans = cantSegundosPorFecha(sys.argv[2])
-		if not ans:
+		if ans == None:
 			print "Formato de fecha invalido"
 		else:
 			print ans
@@ -381,7 +371,7 @@ if sys.argv[1]==funciones[5]:
 if sys.argv[1]==funciones[6]:
 	if len(sys.argv) ==3:
 		ans= pesoPorFecha(sys.argv[2])
-		if not ans:
+		if ans == None:
 			print "Formato de fecha invalido"
 		else:
 			print ans
@@ -391,7 +381,7 @@ if sys.argv[1]==funciones[6]:
 if sys.argv[1]==funciones[7]:
 	if len(sys.argv) ==4:
 		ans= pesoPorIntervalo(sys.argv[2],sys.argv[3])
-		if not ans:
+		if ans == None:
 			print "Formato de fecha invalido"
 		else:
 			print ans
