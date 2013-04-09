@@ -11,8 +11,8 @@ class Argenmap_Cache extends JG_Cache
 
     function __construct($dir)
     {
-        $this->log = new KLogger ( "logs/log.txt" , KLogger::DEBUG );
-        $this->error = new KLogger ( "logs/error.txt" , KLogger::DEBUG );
+        $this->log = new KLogger ( dirname(__FILE__)."/logs/log.txt" , KLogger::DEBUG );
+        $this->error = new KLogger ( dirname(__FILE__)."/logs/error.txt" , KLogger::DEBUG );
         parent::__construct($dir); 
     }
 
@@ -143,4 +143,19 @@ class Argenmap_Cache extends JG_Cache
 
         $this->log->LogInfo("\t$z\t$x\t$y\t$referer\t$ip\t$forwarded_for");        
     }
+
+    function truncate()
+    {
+            $dir = $this->dir;
+            $oldcaches_path = $dir.DIRECTORY_SEPARATOR.'../oldcaches';
+            if(!is_dir($oldcaches_path)) {
+                system('mkdir '.$oldcaches_path);
+            }
+            if(count(glob($dir.DIRECTORY_SEPARATOR."*")) === 0) {
+                return;
+            } 
+            $newDir = time();
+            system("mkdir $oldcaches_path/".$newDir);
+            system("mv $dir/* $oldcaches_path/".$newDir);
+    }    
 }
