@@ -149,13 +149,19 @@ class Argenmap_Cache extends JG_Cache
             $dir = $this->dir;
             $oldcaches_path = $dir.DIRECTORY_SEPARATOR.'../oldcaches';
             if(!is_dir($oldcaches_path)) {
-                system('mkdir '.$oldcaches_path);
+                throw new Exception('truncate: No existe oldcaches');
             }
+
             if(count(glob($dir.DIRECTORY_SEPARATOR."*")) === 0) {
                 return;
             } 
             $newDir = time();
-            system("mkdir $oldcaches_path/".$newDir);
-            system("mv $dir/* $oldcaches_path/".$newDir);
+            if (FALSE === system("mkdir $oldcaches_path/".$newDir) ) {
+                throw new Exception('truncate: no se puede crear el caché viejo');
+            }
+            if (FALSE === system("mv $dir/* $oldcaches_path/".$newDir) ) {
+                throw new Exception('truncate: no se puede mover el caché');
+            }            
+
     }    
 }
