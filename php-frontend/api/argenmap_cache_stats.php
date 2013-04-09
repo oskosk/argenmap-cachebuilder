@@ -151,7 +151,7 @@ class ArgenmapCacheStats
 	}
 
 
-	protected function _parseLine($line) 
+	protected function _parseLine(&$line) 
 	{
 		if (trim($line) == '') {
 			return false;
@@ -194,7 +194,7 @@ class ArgenmapCacheStats
 			$ip = $private_stuff[1];
 			$private_ip = $private_stuff[0];
 		} elseif( count($private_stuff) == 4) {
-			//caso de request normal con proxy pero
+			// caso de request normal con proxy pero
 			// con dos 127.0.0.1 en el campo x_forwarded_for
 			$ip = $private_stuff[2];
 			$private_ip = $private_stuff[0];
