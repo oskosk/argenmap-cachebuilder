@@ -9,4 +9,7 @@ php-frontend/tms/logs/error.txt
 php-frontend/tms/cache/*
 !php-frontend/tms/cache/LEEME
 !php-frontend/tms/cache/.htaccess
+php-frontend/tms/oldcaches/*
+!php-frontend/tms/oldcaches/LEEME
+!php-frontend/tms/oldcaches/.htaccess
 
