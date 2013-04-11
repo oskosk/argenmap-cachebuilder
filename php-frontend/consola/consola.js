@@ -184,7 +184,7 @@ function convertirDataATextoArborJS(data)
       var ip = request.ip;
       var private_ip = request.private_ip;
 
-      if (ip && private_ip) {
+      if (ip != '' && private_ip != '') {
         tein_proxy = true;
       }
 
@@ -232,7 +232,7 @@ function convertirDataATextoArborJS(data)
   uniq = uniq.sort().filter(function(el,i,a){return i==a.indexOf(el);})
   uniqnodes = uniqnodes.sort().filter(function(el,i,a){return i==a.indexOf(el);})
   var texto = uniqnodes.join("\n");
-  var texto = texto + uniq.join("\n");
+  var texto = texto + "\n" + uniq.join("\n");
 
   return texto;  
   
