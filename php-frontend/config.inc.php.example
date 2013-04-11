@@ -5,5 +5,6 @@ $CONFIG = array(
 	'otros_nodos_url' => array(
 		'',
 		''
-	)
+	),
+	'admin_key' => ''
 );
