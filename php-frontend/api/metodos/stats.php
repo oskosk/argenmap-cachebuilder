@@ -74,24 +74,27 @@ function stats_ultimos_requests() {
   $nodos_url = $CONFIG['otros_nodos_url'];
   $requests[] = stats_estenodo_ultimos_requests(true);
   foreach ($nodos_url as $url) {
-    $url .=  '/consola/api/stats/estenodo/ultimosrequests';
-  // Create a stream
-  $opts = array(
-    'http'=>array(
-        'method' => "GET",
-        'header' => "Connection: close\r\n", //Sets the Accept Encoding Feature.
-    )
-  );
+    $url .=  '/api/stats/estenodo/ultimosrequests';
+      // Create a stream
+    try {
+      $opts = array(
+        'http'=>array(
+            'method' => "GET",
+            'header' => "Connection: close\r\n", //Sets the Accept Encoding Feature.
+        )
+      );
 
-  $context = stream_context_create($opts);
-      // Open the file using the HTTP headers set above
-  $remote = file_get_contents($url, false, $context);
+      $context = stream_context_create($opts);
+          // Open the file using the HTTP headers set above
+      $remote = file_get_contents($url, false, $context);
 
       $a = json_decode($remote,true);
 
       $requests[] = $a;
-
+    } catch (Exception $e) {
+      continue;
     }
+  }
       $app->response()->header('Content-Type', 'application/json');
       echo json_encode($requests);
 }
