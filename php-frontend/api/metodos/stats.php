@@ -1,27 +1,5 @@
 <?php
 
-function stats_ping() {
-  global $CONFIG, $app;
-  
-  //include('../este_nodo_ping.php');
-  $relaciones = array();
-  $nodos = array();
-  $nodos_url = $CONFIG['otros_nodos_url'];
-  $nodos_Url[] = $CONFIG['este_nodo_url'];
-  foreach ($nodos_url as $url) {
-    $a = json_decode(file_get_contents($url . '/consola/api/stats/este_nodo_ping'),true);
-    $relaciones = array_merge($relaciones, $a['relaciones']);
-    $nodos = array_merge($nodos, $a['nodos']);
-
-  }
-    $app->response()->header('Content-Type', 'application/json');
-    echo json_encode($relaciones);
-    echo json_encode($nodos);
-}
-
-
-
-
 function stats_este_nodo_requests_por_date($date)
 {
   global $CONFIG, $app;
@@ -97,7 +75,7 @@ function stats_ultimos_requests() {
   $requests[] = stats_estenodo_ultimos_requests(true);
   foreach ($nodos_url as $url) {
     $url .=  '/consola/api/stats/estenodo/ultimosrequests';
-// Create a stream
+  // Create a stream
   $opts = array(
     'http'=>array(
         'method' => "GET",
