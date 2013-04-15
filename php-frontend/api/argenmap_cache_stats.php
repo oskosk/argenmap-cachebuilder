@@ -1,7 +1,9 @@
 <?php
 class ArgenmapCacheStats
 {
-	protected $LOG_DIR; 
+	protected $LOG_DIR;
+	protected $CACHE_DIR;
+	protected $OLDCACHES_DIR;
 	protected $NLINES = 100;
 	protected $_access_log_path;
 	protected $_logLines;
@@ -13,6 +15,8 @@ class ArgenmapCacheStats
 			$this->NLINES = $NLINES;
 		}
 		$this->LOG_DIR = dirname(dirname(__FILE__)) . "/tms/logs";
+		$this->CACHE_DIR = dirname(dirname(__FILE__)) . "/tms/cache";
+		$this->OLDCACHES_DIR = dirname(dirname(__FILE__)) . "/tms/oldcaches";
 		$this->_access_log_path = $this->LOG_DIR . '/log.txt';
 
 		
@@ -128,10 +132,6 @@ class ArgenmapCacheStats
 		return $clientes;
 	}
 	
-
-
-	
-
 	public function ultimosRequests()
 	{
 		$cmd = "tail -n $this->NLINES $this->LOG_DIR/log.txt";
@@ -213,5 +213,33 @@ class ArgenmapCacheStats
 			var_dump($this->_parseLine($line));
 		}
 	}
+
+	public function cacheDiskUsage()
+	{
+		$usage = $this->_diskSpace($this->CACHE_DIR);
+		return ($usage / 1024) . ' KB';
+	}
+
+	public function oldCachesDiskUsage()
+	{
+		$usage = $this->_diskSpace($this->OLDCACHES_DIR);
+		return ($usage / 1024) . ' KB';
+	}	
+
+	function _diskSpace($dir) 
+	{ 
+		$s = stat($dir); 
+		$space = $s["blocks"]*512; 
+		if (is_dir($dir)) { 
+		 	$dh = opendir($dir); 
+			while (($file = readdir($dh)) !== false)  {
+		  	if ($file != "." and $file != "..") {
+		    	$space += $this->_diskSpace($dir."/".$file); 
+		    }
+			}
+		 	closedir($dh); 
+		} 
+		return $space; 
+	}	
 }
 
