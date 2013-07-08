@@ -1,5 +1,6 @@
 <?php
 $usarSesion = isset($_GET['polling']) && $_GET['polling'] == true;
+$interval = isset($_GET['interval']) && !$usarSesion ? int($_GET['interval']) : 1;
 header("Access-Control-Allow-Origin: *");
 if($usarSesion)
 {
@@ -29,7 +30,7 @@ if($usarSesion)
 		echo "\n\n";
 		ob_flush();
 		flush();
-		sleep(2);
+		sleep($interval);
 	}
 }
 class ArgenmapLive
@@ -158,7 +159,8 @@ class ArgenmapLive
 			'porReferer' => array(),
 			'porIP' => array(),
 			'porDate' => array(),
-			'porDateTime' => array()			
+			'porDateTime' => array(),
+			'porTile' => array()
 		);
 
 		if (count($lines) == 0 ) {
@@ -175,11 +177,13 @@ class ArgenmapLive
 			$referer = $request['referer'];
 			$ip = $request['ip'];
 			$private_ip = $request['private_ip'];
+			$tile = $request['tile'];
 
 			$this->indexedDiffLines['porReferer'][$referer][] = &$ll;
 			$this->indexedDiffLines['porIP'][$ip][] = &$ll;
 			$this->indexedDiffLines['porDate'][$date][] = &$ll;
 			$this->indexedDiffLines['porDateTime'][$datetime][] = &$ll;
+			$this->indexedDiffLines['porTile'][$tile][] = &$ll;
 		}
 	}
 	protected function _parseLine(&$line) 
@@ -203,11 +207,7 @@ class ArgenmapLive
 		$ret = array();
 		$ret['date'] = $date;
 		$ret['datetime'] = $datetime;
-		$ret['tile'] = array(
-			'z'=>$request[1],
-			'x'=>$request[2],
-			'y'=>$request[3]
-		);
+		$ret['tile'] = $request[1].'-'.$request[2].'-'.$request[3];
 		$ret['referer'] = $referer;
 		
 		// Este chequeo es porque el proxy de AppFog, 
