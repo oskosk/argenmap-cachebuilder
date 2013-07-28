@@ -1,13 +1,13 @@
 <?php
 
-require "../config.inc.php";
-require "argenmap_cache_stats.php";
-require "Slim/Slim.php";
+require "config.inc.php";
+require "api/argenmap_cache_stats.php";
+require "api/Slim/Slim.php";
 
-require "metodos/auth.php";
-require "metodos/stats.php";
-require "metodos/cache.php";
-require "metodos/status.php";
+require "api/metodos/auth.php";
+require "api/metodos/stats.php";
+require "api/metodos/cache.php";
+require "api/metodos/status.php";
 
 
 $app = new Slim( array(
