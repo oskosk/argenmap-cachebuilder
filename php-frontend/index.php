@@ -14,6 +14,30 @@ $app = new Slim( array(
   'debug'=>true
 ));
 
+$app->notFound(function () use ($app) {
+    $app->render( '404.html');
+});
+
+$app->get('/ptms/:capa/:z/:y/:x\.:format', 'tms_get');
+
+function tms_get($capa, $z, $x, $y, $format)
+{
+  global $app;
+  require "tms/index.php";
+  if (!in_array($format, array('png') ) ) {
+    $app->notFound();
+  }
+  $bytes_sent = tms( $capa, $z, $x, $y, 'png' );
+  if ( $bytes_sent ) {
+    $res = $app->response();
+    $res["Content-Type"] = "image/png";
+    $res["Content-Length"] = $bytes_sent;
+  } else {
+    $app->error('No se pudo conseguir la tile de la capa ' . $capa);
+  }  
+
+
+} 
 $app->get('/stats/estenodo/:date/requests', 'stats_este_nodo_requests_por_date');
 $app->get('/stats/estenodo/requests', 'stats_estenodo_requests');
 $app->get('/stats/estenodo/ultimosrequests', 'stats_estenodo_ultimos_requests');
