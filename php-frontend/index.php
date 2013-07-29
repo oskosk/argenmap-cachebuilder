@@ -18,7 +18,7 @@ $app->notFound(function () use ($app) {
     $app->render( '404.html');
 });
 
-$app->get('/ptms/:capa/:z/:y/:x\.:format', 'tms_get');
+$app->get('/tms/:capa/:z/:y/:x\.:format', 'tms_get');
 
 function tms_get($capa, $z, $x, $y, $format)
 {
