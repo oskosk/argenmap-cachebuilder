@@ -1,7 +1,7 @@
 <?php
-require(dirname(__FILE__). "/../../KLogger.php");
-require(dirname(__FILE__). "/../../cache.php");
-require(dirname(__FILE__). "/../../argenmap_cache.php");
+require(dirname(__FILE__). "/../lib/KLogger.php");
+require(dirname(__FILE__). "/../lib/cache.php");
+require(dirname(__FILE__). "/../lib/argenmap_cache.php");
 
 function cache_estenodo_truncate()
 {

@@ -9,7 +9,10 @@
 	<script type="text/javascript">
 var liveGraph;
 $(document).ready(function(){
-	liveGraph = new ArgenmapLiveGraph({longPolling:true});
+	liveGraph = new ArgenmapLiveGraph({
+		sourceUrl: '/pruebas/argenmapcachebuilder-con-slim/argenmap-cachebuilder/php-frontend/live/poll',
+		longPolling:true
+	});
 });
 	</script>
 <style>

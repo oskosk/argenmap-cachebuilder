@@ -49,10 +49,28 @@ $app->get('/api/cache/truncate', 'cache_truncate');
 $app->get('/api/cache/estenodo/truncate', 'auth_admin', 'cache_estenodo_truncate');
 
 $app->get('/api/status/estenodo', 'status_estenodo');
-$app->get('/', 'indexchris');
+$app->get('/live/poll', 'live_poll');
+$app->get('/live', 'live');
+$app->get('/', 'live_consola');
 $app->run();
 
-function indexchris()
+
+function live_consola()
 {
-	require "indexchris.php";
+  global $app;
+	require "controllers/live.php";
+}
+
+function live()
+{ 
+  global $app;
+  $usarSesion=false;
+  require "lib/argenmap_live.php";  
+}
+
+function live_poll()
+{ 
+  global $app;
+  $usarSesion=true;
+  require "lib/argenmap_live.php";
 }

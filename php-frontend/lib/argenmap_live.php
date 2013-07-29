@@ -1,5 +1,6 @@
 <?php
-$usarSesion = isset($_GET['polling']) && $_GET['polling'] == true;
+
+//$usarSesion = isset($_GET['polling']) && $_GET['polling'] == true;
 $interval = isset($_GET['interval']) && !$usarSesion ? int($_GET['interval']) : 1;
 header("Access-Control-Allow-Origin: *");
 if($usarSesion)
@@ -17,7 +18,7 @@ if($usarSesion)
 {
 	echo "data: " . json_encode($live->results) . " " . PHP_EOL;
 	echo PHP_EOL;
-	ob_flush();
+//	ob_flush();
 	flush();
 }else{
 	//ver este ejemplo de implementacion php de sse
@@ -52,7 +53,7 @@ class ArgenmapLive
 		$this->USE_SESSION = $useSession;
 		$this->START_MICRO_TIME = microtime(true);
 		$this->resetVars();
-		if($_GET['sid']) session_id($_GET['sid']);
+		if(@$_GET['sid']) session_id($_GET['sid']);
 		session_start();
 		if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 180))
 		{
