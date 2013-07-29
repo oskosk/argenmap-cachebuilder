@@ -4,10 +4,10 @@ require "config.inc.php";
 require "lib/argenmap_cache_stats.php";
 require "lib/Slim/Slim.php";
 
-require "lib/api/metodos/auth.php";
-require "lib/api/metodos/stats.php";
-require "lib/api/metodos/cache.php";
-require "lib/api/metodos/status.php";
+require "controllers/auth.php";
+require "controllers/stats.php";
+require "controllers/cache.php";
+require "controllers/status.php";
 
 
 $app = new Slim( array(
@@ -23,6 +23,7 @@ $app->get('/tms/:capa/:z/:y/:x\.:format', 'tms_get');
 function tms_get($capa, $z, $x, $y, $format)
 {
   global $app;
+  $app->etag(md5("$capa-$z-$x-$y-$format"));
   require "lib/tms_slim_handler.php";
   if (!in_array($format, array('png') ) ) {
     $app->notFound();
