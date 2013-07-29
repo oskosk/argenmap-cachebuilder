@@ -11,7 +11,7 @@ if($usarSesion)
 header('Cache-Control: no-cache'); // recommended to prevent caching of event data.
 
 $serverTime = time();
-$live = new ArgenmapLive("tms/logs/log.txt",$usarSesion);
+$live = new ArgenmapLive("data/logs/log.txt",$usarSesion);
 
 if($usarSesion)
 {
