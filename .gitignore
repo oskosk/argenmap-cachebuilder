@@ -2,14 +2,14 @@
 *.pyc
 *.swp
 config.inc.php
-php-frontend/tms/logs/log.txt
-php-frontend/tms/logs/error.txt
-!php-frontend/tms/logs/LEEME
-!php-frontend/tms/logs/.htaccess
-php-frontend/tms/cache/*
-!php-frontend/tms/cache/LEEME
-!php-frontend/tms/cache/.htaccess
-php-frontend/tms/oldcaches/*
-!php-frontend/tms/oldcaches/LEEME
-!php-frontend/tms/oldcaches/.htaccess
+php-frontend/data/logs/log.txt
+php-frontend/data/logs/error.txt
+!php-frontend/data/logs/LEEME
+!php-frontend/data/logs/.htaccess
+php-frontend/data/cache/*
+!php-frontend/data/cache/LEEME
+!php-frontend/data/cache/.htaccess
+php-frontend/data/oldcaches/*
+!php-frontend/data/oldcaches/LEEME
+!php-frontend/data/oldcaches/.htaccess
 
