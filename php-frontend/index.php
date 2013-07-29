@@ -23,7 +23,7 @@ $app->get('/ptms/:capa/:z/:y/:x\.:format', 'tms_get');
 function tms_get($capa, $z, $x, $y, $format)
 {
   global $app;
-  require "tms/index.php";
+  require "lib/tms_slim_handler.php";
   if (!in_array($format, array('png') ) ) {
     $app->notFound();
   }
