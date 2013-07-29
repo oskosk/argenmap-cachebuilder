@@ -2,7 +2,7 @@
 
 require "config.inc.php";
 require "lib/argenmap_cache_stats.php";
-require "api/Slim/Slim.php";
+require "lib/Slim/Slim.php";
 
 require "lib/api/metodos/auth.php";
 require "lib/api/metodos/stats.php";
