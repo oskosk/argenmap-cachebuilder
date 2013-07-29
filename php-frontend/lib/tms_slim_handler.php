@@ -8,7 +8,7 @@ require_once('argenmap_cache.php');
 // un año en segundos
 define('CACHE_TTL',  31536000);
 
-$cache = new Argenmap_Cache('tms/cache');
+$cache = new Argenmap_Cache('data/cache');
 
 
 $baseURL = 'http://mapa.ign.gob.ar/geoserver/gwc/service/tms/1.0.0';

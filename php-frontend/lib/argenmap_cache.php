@@ -11,8 +11,8 @@ class Argenmap_Cache extends JG_Cache
 
     function __construct($dir)
     {
-        $this->log = new KLogger ( dirname(__FILE__)."/logs/log.txt" , KLogger::DEBUG );
-        $this->error = new KLogger ( dirname(__FILE__)."/logs/error.txt" , KLogger::DEBUG );
+        $this->log = new KLogger ( dirname(__FILE__)."/../data/logs/log.txt" , KLogger::DEBUG );
+        $this->error = new KLogger ( dirname(__FILE__)."/../data/logs/error.txt" , KLogger::DEBUG );
         parent::__construct($dir); 
     }
 
