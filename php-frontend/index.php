@@ -38,14 +38,14 @@ function tms_get($capa, $z, $x, $y, $format)
 
 
 } 
-$app->get('/stats/estenodo/:date/requests', 'stats_este_nodo_requests_por_date');
-$app->get('/stats/estenodo/requests', 'stats_estenodo_requests');
-$app->get('/stats/estenodo/ultimosrequests', 'stats_estenodo_ultimos_requests');
-$app->get('/stats/ultimosrequests', 'stats_ultimos_requests');
+$app->get('/api/stats/estenodo/:date/requests', 'stats_este_nodo_requests_por_date');
+$app->get('/api/stats/estenodo/requests', 'stats_estenodo_requests');
+$app->get('/api/stats/estenodo/ultimosrequests', 'stats_estenodo_ultimos_requests');
+$app->get('/api/stats/ultimosrequests', 'stats_ultimos_requests');
 
-$app->get('/cache/truncate', 'cache_truncate');
-$app->get('/cache/estenodo/truncate', 'auth_admin', 'cache_estenodo_truncate');
+$app->get('/api/cache/truncate', 'cache_truncate');
+$app->get('/api/cache/estenodo/truncate', 'auth_admin', 'cache_estenodo_truncate');
 
-$app->get('/status/estenodo', 'status_estenodo');
+$app->get('/api/status/estenodo', 'status_estenodo');
 $app->run();
 
