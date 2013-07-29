@@ -38,6 +38,7 @@ function tms_get($capa, $z, $x, $y, $format)
 
 
 } 
+
 $app->get('/api/stats/estenodo/:date/requests', 'stats_este_nodo_requests_por_date');
 $app->get('/api/stats/estenodo/requests', 'stats_estenodo_requests');
 $app->get('/api/stats/estenodo/ultimosrequests', 'stats_estenodo_ultimos_requests');
@@ -47,5 +48,10 @@ $app->get('/api/cache/truncate', 'cache_truncate');
 $app->get('/api/cache/estenodo/truncate', 'auth_admin', 'cache_estenodo_truncate');
 
 $app->get('/api/status/estenodo', 'status_estenodo');
+$app->get('/', 'indexchris');
 $app->run();
 
+function indexchris()
+{
+	require "indexchris.php";
+}
