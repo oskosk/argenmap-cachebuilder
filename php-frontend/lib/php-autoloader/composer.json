@@ -1,0 +1,19 @@
+{
+    "name": "malkusch/php-autoloader",
+    "type": "library",
+    "description": "This autoloader supports every autoloadable PHP feature up to PHP 5.4’s traits. It find’s every class, interface or traits definition in any situation. No matter what convention is used. The autoloader is index based. After building the index there will be no performance issue. The building is done dynamically. There is no explicit need of calling a build script. For the sake of comfortability there exists a script for prebuilding an index.",
+    "keywords": ["autoloader", "autoload"],
+    "homepage": "http://php-autoloader.malkusch.de/en/",
+    "license": "GPL-3.0+",
+    "authors": [
+        {
+            "name": "Markus Malkusch",
+            "email": "markus@malkusch.de",
+            "homepage": "http://www.malkusch.de/"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "bin": ["bin/autoloader-build.php"]
+}
