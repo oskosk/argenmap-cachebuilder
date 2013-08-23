@@ -1,7 +1,8 @@
 <?php
 
 require "config.inc.php";
-require "lib/argenmap_cache_stats.php";
+require "lib/php-autoloader/autoloader.php";
+//require "lib/argenmap_cache_stats.php";
 require "lib/Slim/Slim.php";
 
 require "controllers/auth.php";
