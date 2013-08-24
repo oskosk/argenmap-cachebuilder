@@ -29,17 +29,17 @@ class TMS {
     }  
   } 
 
-  static function status($capa, $z, $x, $y)
+  static function status($capa, $z, $x, $y, $format)
   {
     global $app;
     
-    $response = \Argenmap\TMSServer::tileStatus( $capa, $z, $x, $y, 'png' );
-    $bytes = $response['bytes_sent'];
-    $ETag = $response['ETag'];
+    $cache = new \Argenmap\Cache();
+    $response = $cache->tileStatus( $capa, $z, $x, $y, $format );
     
-    if ( $bytes ) {
-      $app->etag($ETag);
+    if ( $response ) {
       $res = $app->response();
+      $res["Content-Type"] = "application/json";
+      echo json_encode($response);
     } else {
       $app->error('No se pudo conseguir la tile de la capa ' . $capa);
     }  

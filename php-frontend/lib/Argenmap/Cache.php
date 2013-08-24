@@ -1,8 +1,8 @@
 <?php
 /*
-	For explanation and usage, see:
-	http://www.jongales.com/blog/2009/02/18/simple-file-based-php-cache-class/
-*/	
+  For explanation and usage, see:
+  http://www.jongales.com/blog/2009/02/18/simple-file-based-php-cache-class/
+*/  
 
 namespace Argenmap;
 
@@ -55,12 +55,12 @@ class Cache extends \JG_Cache
 
         $cache = '';
 
-	    $fsize = filesize($cache_path);
+      $fsize = filesize($cache_path);
         if ( $fsize > 0)
         {
-	    //header("Content-Type: image/png");
-	    //header("Content-Length: " . $fsize );
-	    $cache = fpassthru( $fp );
+      //header("Content-Type: image/png");
+      //header("Content-Length: " . $fsize );
+      $cache = fpassthru( $fp );
         }
         else
         {
@@ -123,6 +123,40 @@ class Cache extends \JG_Cache
 
         return $f;
     }   
+
+      function tileStatus($capa,$z,$x,$y,$format)
+      {
+
+        // un año en segundos
+        define('CACHE_TTL',  31536000);
+
+ 
+        $baseURL = 'http://mapa.ign.gob.ar/geoserver/gwc/service/tms/1.0.0';
+
+        $capa = $capa . '@EPSG:3857@png8';
+        //apendeo el 8 para pedir png8
+        $tileURL = sprintf("%s/%s/%s/%s/%s.%s", $baseURL, $capa, $z, $x, $y,$format."8");
+
+        $bytes_sent = NULL;
+        $cache_path = $this->_name($tileURL);
+
+        if (file_exists($cache_path)) {
+          return array(
+            'origin' => $tileURL,
+            'updated' =>  date ("F d Y H:i:s.T", filemtime($cache_path)),
+            'size' => filesize($cache_path),
+            'ETag' => $this->calcularETag($tileURL)
+          );
+        } else {
+          return array(
+            'origin' => $tileURL,
+            'updated' => FALSE,
+            'size' => 0,
+            'ETag' => FALSE
+          );          
+        }
+
+      }    
 
     function calcularETag($url)
     {   

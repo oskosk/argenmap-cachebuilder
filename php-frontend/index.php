@@ -8,6 +8,7 @@ require "lib/Slim/Slim.php";
 require "controllers/stats.php";
 require "controllers/status.php";
 
+date_default_timezone_set('ART');
 
 $app = new Slim( array(
   'debug'=>true
@@ -18,7 +19,7 @@ $app->notFound(function () use ($app) {
 });
 
 $app->get('/tms/:capa/:z/:y/:x\.:format', 'Controllers\TMS::get');
-$app->get('/tile/:capa/:z/:y/:x/status.json', 'Controllers\TMS::status');
+$app->get('/tms/:capa/:z/:y/:x\.:format/status.json', 'Controllers\TMS::status');
 
 $app->get('stats/estenodo/:date/requests', 'stats_este_nodo_requests_por_date');
 $app->get('stats/estenodo/requests', 'stats_estenodo_requests');
