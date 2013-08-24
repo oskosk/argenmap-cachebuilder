@@ -1,24 +1,32 @@
 <?php
 /*
 	For explanation and usage, see:
-	
 	http://www.jongales.com/blog/2009/02/18/simple-file-based-php-cache-class/
 */	
-class Argenmap_Cache extends JG_Cache
+
+namespace Argenmap;
+
+
+class Cache extends \JG_Cache
 {
     private $log;
     private $error;
 
-    function __construct($dir)
+    
+    function __construct()
     {
-        $this->log = new KLogger ( dirname(__FILE__)."/../data/logs/log.txt" , KLogger::DEBUG );
-        $this->error = new KLogger ( dirname(__FILE__)."/../data/logs/error.txt" , KLogger::DEBUG );
-        parent::__construct($dir); 
+        $hoy = date("Y-m-d");
+        $log_filename = "log-$hoy.txt";
+        $error_filename = "error-$hoy.txt";
+        $this->log = new \KLogger ( \Argenmap\Config::logs_path() . "/$log_filename" , \KLogger::DEBUG );
+        $this->error = new \KLogger ( \Argenmap\Config::logs_path() . "/$error_filename" , \KLogger::DEBUG );
+        $cache_dir = \Argenmap\Config::cache_path();
+
+        parent::__construct($cache_dir); 
     }
 
     public function getAndPassthru($key, $expiration = 3600)
     {
-
 
         if ( !is_dir($this->dir) OR !is_writable($this->dir))
         {
@@ -114,7 +122,20 @@ class Argenmap_Cache extends JG_Cache
         }
 
         return $f;
-    }    
+    }   
+
+    function calcularETag($url)
+    {   
+        $cache_path = $this->_name($url);
+
+        if (!@file_exists($cache_path)) {
+            return FALSE;
+        }
+
+        $mtime = filemtime($cache_path);
+        $ETag = md5("$url-$mtime");
+        return $ETag;
+    }        
 
     function LogError($s)
     {

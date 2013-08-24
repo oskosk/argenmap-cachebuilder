@@ -2,8 +2,8 @@
 *.pyc
 *.swp
 config.inc.php
-php-frontend/data/logs/log.txt
-php-frontend/data/logs/error.txt
+php-frontend/data/logs/log*.txt
+php-frontend/data/logs/error*.txt
 !php-frontend/data/logs/LEEME
 !php-frontend/data/logs/.htaccess
 php-frontend/data/cache/*

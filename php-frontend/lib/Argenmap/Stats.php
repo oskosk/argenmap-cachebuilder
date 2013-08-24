@@ -1,5 +1,8 @@
 <?php
-class ArgenmapCacheStats
+
+namespace Argenmap;
+
+class Stats
 {
 	protected $LOG_DIR;
 	protected $CACHE_DIR;
