@@ -20,5 +20,13 @@ class Cache {
     
 
   }
+
+  static function status()
+  {
+    global $app;
+    $cache = new \Argenmap\Cache();
+    $app->response()->header('Content-type', 'application/json');
+    echo json_encode($cache->status());
+  }
 }
   

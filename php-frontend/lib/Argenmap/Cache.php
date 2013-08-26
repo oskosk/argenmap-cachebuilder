@@ -15,12 +15,21 @@ class Cache extends \JG_Cache
     function __construct()
     {
         $this->logger = new \Argenmap\Logger();        
-        $cache_dir = \Argenmap\Config::cache_path();
+        $cache_dir = $this->cache_directory();
 
         parent::__construct($cache_dir); 
     }
 
+    function cache_directory()
+    {
+      return \Argenmap\Config::cache_path();
+    }
 
+    function oldcachesDirname()
+    {
+      $dir = $this->dir;
+      return $dir.DIRECTORY_SEPARATOR.'../oldcaches';
+    }
 
     public function getAndPassthru($key, $expiration = 3600)
     {
@@ -189,22 +198,88 @@ class Cache extends \JG_Cache
 
     function truncate()
     {
-            $dir = $this->dir;
-            $oldcaches_path = $dir.DIRECTORY_SEPARATOR.'../oldcaches';
-            if(!is_dir($oldcaches_path)) {
-                throw new Exception('truncate: No existe oldcaches');
-            }
+      $dir = $this->dir;
+      $oldcaches_path = $this->oldcachesDirname();
 
-            if(count(glob($dir.DIRECTORY_SEPARATOR."*")) === 0) {
-                return;
-            } 
-            $newDir = time();
-            if (FALSE === system("mkdir $oldcaches_path/".$newDir) ) {
-                throw new Exception('truncate: no se puede crear el caché viejo');
-            }
-            if (FALSE === system("mv $dir/* $oldcaches_path/".$newDir) ) {
-                throw new Exception('truncate: no se puede mover el caché');
-            }            
+      if(!is_dir($oldcaches_path)) {
+          throw new Exception('truncate: No existe oldcaches');
+      }
+
+      if(count(glob($dir.DIRECTORY_SEPARATOR."*")) === 0) {
+          return;
+      } 
+      $newDir = time();
+      if (FALSE === system("mkdir $oldcaches_path/".$newDir) ) {
+          throw new Exception('truncate: no se puede crear el caché viejo');
+      }
+      if (FALSE === system("mv $dir/* $oldcaches_path/".$newDir) ) {
+          throw new Exception('truncate: no se puede mover el caché');
+      }            
 
     }    
+
+    function status()
+    {
+      
+      $ret = array(
+        'cache_size' => $this->cacheSize(),
+        'tiles_count' => count(glob($this->cache_directory().DIRECTORY_SEPARATOR."*")),
+        'old_caches' => $this->oldcachesStatus()
+      );
+
+
+      return $ret;
+    }
+
+    /*
+     Devuelve el tamaño del caché actual en KB
+     */
+    function cacheSize()
+    {
+      $f = $this->cache_directory();
+      return $this->_dirSize($f);
+    }
+    /*
+     Devuelve el tamaño de un dir en KB
+     */
+    function _dirSize($dir)
+    {
+      $cmd = '/usr/bin/du -sk ' . $dir;
+      $io = popen ( $cmd , 'r' );
+      $size = fgets ( $io, 4096);
+      $size = explode("\t", $size);
+      $size = $size[0];
+      pclose ( $io );
+      return $size;      
+    }
+
+    function oldcachesStatus()
+    {
+      $ret = array();
+      $oldcaches_path = realpath($this->oldcachesDirname());
+      if(!is_dir($oldcaches_path)) {
+          return array();
+      }
+
+      if(count(glob($oldcaches_path.DIRECTORY_SEPARATOR."*")) === 0) {
+          return array();
+      } else {
+        $oldcaches = glob($oldcaches_path.DIRECTORY_SEPARATOR."*");
+        foreach($oldcaches as $oc) {
+          if ((int) basename($oc)) {
+            $date_truncated = date('Y-m-d H:i:s', basename($oc));
+            $ret[] = array(
+              'directory_name' => basename($oc),
+              'tiles_count' => count(glob($oc.DIRECTORY_SEPARATOR."*")),
+              'size' => $this->_dirSize($oc),
+              'date_truncated' => $date_truncated
+            );
+          }
+        }
+        
+      }
+      return $ret;
+
+    }
+
 }
