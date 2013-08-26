@@ -9,21 +9,18 @@ namespace Argenmap;
 
 class Cache extends \JG_Cache
 {
-    private $log;
     private $error;
 
     
     function __construct()
     {
-        $hoy = date("Y-m-d");
-        $log_filename = "log-$hoy.txt";
-        $error_filename = "error-$hoy.txt";
-        $this->log = new \KLogger ( \Argenmap\Config::logs_path() . "/$log_filename" , \KLogger::DEBUG );
-        $this->error = new \KLogger ( \Argenmap\Config::logs_path() . "/$error_filename" , \KLogger::DEBUG );
+        $this->logger = new \Argenmap\Logger();        
         $cache_dir = \Argenmap\Config::cache_path();
 
         parent::__construct($cache_dir); 
     }
+
+
 
     public function getAndPassthru($key, $expiration = 3600)
     {
@@ -64,7 +61,7 @@ class Cache extends \JG_Cache
         }
         else
         {
-            $this->error->LogError("\tEl archivo del caché existe pero tiene 0 bytes");
+            $this->logger->LogError("\tEl archivo del caché existe pero tiene 0 bytes");
             $cache = NULL;
         }
 
@@ -171,15 +168,6 @@ class Cache extends \JG_Cache
         return $ETag;
     }        
 
-    function LogError($s)
-    {
-       $this->error->LogError($s); 
-    }
-
-    function LogInfo($s)
-    {
-        $this->log->LogInfo($s);     
-    }
 
     function logTileServida($z, $x, $y)
     {
@@ -196,7 +184,7 @@ class Cache extends \JG_Cache
             $referer = $_SERVER["HTTP_REFERER"];
         }
 
-        $this->log->LogInfo("\t$z\t$x\t$y\t$referer\t$ip\t$forwarded_for");        
+        $this->logger->LogInfo("\t$z\t$x\t$y\t$referer\t$ip\t$forwarded_for");        
     }
 
     function truncate()
