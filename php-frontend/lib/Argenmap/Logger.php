@@ -33,7 +33,7 @@ class Logger {
     {
         $hoy = date("Y-m-d");
         $log_filename = "error-$hoy.txt";
-        $error_filename = \Argenmap\Config::logs_path() . "/$log_filename";
+        $log_filename = \Argenmap\Config::logs_path() . "/$log_filename";
         return $log_filename;
     }
 
@@ -65,6 +65,20 @@ class Logger {
 		}		
 
 		return $uniq;
+	}
+
+	function diasDisponibles()
+	{
+		$dirname = dirname($this->logFilename());
+		$files = glob("$dirname/log*.txt");
+		$files = array_map(function($v) {
+			$fname = basename($v);
+			$fname = explode('log-', $fname);
+			$fname = explode('.', $fname[1]);
+			return $fname[0];
+		}, $files);
+		return $files;
+
 	}
 
 	protected function _parseLogfileLine(&$line) 

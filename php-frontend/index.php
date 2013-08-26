@@ -20,6 +20,7 @@ $app->notFound(function () use ($app) {
 $app->get('/tms/:capa/:z/:y/:x\.:format', 'Controllers\TMS::get');
 $app->get('/tms/:capa/:z/:y/:x\.:format/status.json', 'Controllers\TMS::status');
 $app->get('/stats/estenodo/ultimosrequests', 'Controllers\Stats::estenodo_ultimos_requests');
+$app->get('/logs/diasdisponibles.json', 'Controllers\Stats::diasDisponibles');
 
 $app->get('/stats/estenodo/:date/requests', 'stats_este_nodo_requests_por_date');
 $app->get('/stats/estenodo/requests', 'stats_estenodo_requests');

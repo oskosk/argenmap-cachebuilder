@@ -103,6 +103,15 @@ class Stats {
         echo json_encode($requests);
   }
 
+  static function diasDisponibles()
+  {
+    global $app;
+    $logger = new \Argenmap\Logger();
+    $lines = $logger->diasDisponibles();
+    $app->response()->header('Content-Type', 'application/json');    
+    echo json_encode($lines);
+  }
+
   static function estenodo_ultimos_requests($dont_echo=false)
   {
     global $CONFIG, $app;
