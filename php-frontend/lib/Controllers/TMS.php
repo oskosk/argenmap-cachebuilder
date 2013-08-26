@@ -8,9 +8,6 @@ class TMS {
   {
     global $app;
     
-
-
-
     if (!in_array($format, array('png') ) ) {
       $app->notFound();
     }

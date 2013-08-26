@@ -15,8 +15,9 @@ class Live
 	private $rawDiffLines;
 	private $indexedDiffLines;
 	public $results;
+	private $logger;
 
-	function __construct($filePath, $useSession = true)
+	function __construct($useSession = true)
 	{
 		$this->USE_SESSION = $useSession;
 		$this->START_MICRO_TIME = microtime(true);
@@ -30,7 +31,8 @@ class Live
 			session_destroy();   // destroy session data in storage
 		}
 		$_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp
-		$this->LOG_FILE_PATH = realpath($filePath);
+		$this->logger = new \Argenmap\Logger();
+		$this->LOG_FILE_PATH = realpath($this->logger->logFilename());
 		if(!$this->LOG_FILE_PATH) 
 		{
 			$this->setError("No se encuentra el log. ({$filePath})");
@@ -47,7 +49,7 @@ class Live
 		$this->FROM_LINE = $_SESSION["argenmap_stats"]["leerDesde"];
 		$this->countDiffLines();
 		$this->getRawDiffLines();
-		$this->indexLogLines();
+		$this->indexLogLines();	
 		$this->consolidarResultados();
 	}
 	function __destruct()
@@ -139,7 +141,7 @@ class Live
 			if ($ll == '') {
 				continue;
 			}
-			$request = $this->_parseLine($ll);
+			$request = $this->logger->_parseLogfileLine($ll);
 			
 			$date = $request['date'];
 			$datetime = $request['datetime'];
@@ -147,7 +149,7 @@ class Live
 			$ip = $request['ip'];
 			$private_ip = $request['private_ip'];
 			$tile = $request['tile'];
-
+			$tile = $tile['z'].'-'.$tile['x'].'-'.$tile['y'];
 			$this->indexedDiffLines['porReferer'][$referer][] = &$ll;
 			$this->indexedDiffLines['porIP'][$ip][] = &$ll;
 			$this->indexedDiffLines['porDate'][$date][] = &$ll;
@@ -155,54 +157,6 @@ class Live
 			$this->indexedDiffLines['porTile'][$tile][] = &$ll;
 		}
 	}
-	protected function _parseLine(&$line) 
-	{
-		if (trim($line) == '') {
-			return false;
-		}
-		
-		$request = explode("\t", $line);
-		$trash = explode(' - ', $request[0]);
-		$datetime = $trash[0];
-		$trash = explode(' ', $datetime);
-		$date = $trash[0];
-		$referer = $request[4];
-		$ip = $request[5];
-		//este campo suele venir vacío porque
-		// generalmente no hay proxies involucrador en el request
-		// De hecho, muchos proxies ocultan la ip privada		
-		$private_ip = @$request[6];
 
-		$ret = array();
-		$ret['date'] = $date;
-		$ret['datetime'] = $datetime;
-		$ret['tile'] = $request[1].'-'.$request[2].'-'.$request[3];
-		$ret['referer'] = $referer;
-		
-		// Este chequeo es porque el proxy de AppFog, 
-		// en el header(string) X_FORWARDED_FOR mete
-		// la IP pública del cliente y un 127.0.0.1
-		// separados por comas porque usa reverse
-		// proxies para balancear los pedidos a cada app
-		$private_stuff = explode(',', $private_ip);
-		if ( count($private_stuff) == 2) {
-			//caso de request normal sin proxy
-			$ip = $private_stuff[0];
-			$private_ip = false;
-		} elseif( count($private_stuff) == 3) {
-			//caso de request normal con proxy
-			$ip = $private_stuff[1];
-			$private_ip = $private_stuff[0];
-		} elseif( count($private_stuff) == 4) {
-			// caso de request normal con proxy pero
-			// con dos 127.0.0.1 en el campo x_forwarded_for
-			$ip = $private_stuff[2];
-			$private_ip = $private_stuff[0];
-		}
-		$ret['ip'] = trim($ip);		
-		$ret['private_ip'] = trim($private_ip);
-
-		return $ret;
-	}
 
 }

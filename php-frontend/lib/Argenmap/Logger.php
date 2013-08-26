@@ -19,7 +19,7 @@ class Logger {
 	/** 
 	 * Devuelve el nombre del archivo de log de requests
 	 */
-	function logFilename()
+	function logFilename($date=false)
     {
         $hoy = date("Y-m-d");
         $log_filename = "log-$hoy.txt";
@@ -29,7 +29,7 @@ class Logger {
 	/** 
 	 * Devuelve el nombre del archivo de log de errores
 	 */
-    function errorlogFilename()
+    function errorlogFilename($date=false)
     {
         $hoy = date("Y-m-d");
         $log_filename = "error-$hoy.txt";
@@ -81,7 +81,7 @@ class Logger {
 
 	}
 
-	protected function _parseLogfileLine(&$line) 
+	function _parseLogfileLine(&$line) 
 	{
 		if (trim($line) == '') {
 			return false;
