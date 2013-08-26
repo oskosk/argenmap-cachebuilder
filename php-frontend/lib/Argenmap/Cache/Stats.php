@@ -96,17 +96,7 @@ class Stats
 
 	}
 
-	public function requestsPorDate($date)
-	{
-		$requests = $this->_indexedLogLines();
-		if ( isset($requests['porDate'][$date]) ) {
-			return $requests['porDate'][$date];	
-		} else {
-			return array();
-		}
 
-		
-	}
 
 	public function referersPorDate($date)
 	{

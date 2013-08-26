@@ -21,20 +21,25 @@ class Logger {
 	 */
 	function logFilename($date=false)
     {
-        $hoy = date("Y-m-d");
-        $log_filename = "log-$hoy.txt";
-        $log_filename = \Argenmap\Config::logs_path() . "/$log_filename" ;
-        return $log_filename;
+      if (! $date ) {
+        $date = date("Y-m-d");
+      }
+      $log_filename = "log-$date.txt";
+      $log_filename = \Argenmap\Config::logs_path() . "/$log_filename" ;
+      return $log_filename;
     }
+
 	/** 
 	 * Devuelve el nombre del archivo de log de errores
 	 */
     function errorlogFilename($date=false)
     {
-        $hoy = date("Y-m-d");
-        $log_filename = "error-$hoy.txt";
-        $log_filename = \Argenmap\Config::logs_path() . "/$log_filename";
-        return $log_filename;
+      if (! $date ) {
+        $date = date("Y-m-d");
+      }      
+      $log_filename = "error-$date.txt";
+      $log_filename = \Argenmap\Config::logs_path() . "/$log_filename";
+      return $log_filename;
     }
 
     function logError($s)
@@ -55,17 +60,22 @@ class Logger {
 		$lines =  shell_exec( $cmd ); 
 
 		$lines = explode("\n",  $lines);
-		$uniq = array();		
-		foreach ($lines as $ll) {
-			if (trim($ll) == '') {
-				continue;
-			}
-			$ll = $this->_parseLogfileLine($ll);
-			$uniq[] = $ll;
-		}		
-
-		return $uniq;
+    return $this->jsonifyParsedLogLines($lines);
 	}
+
+  function jsonifyParsedLogLines($lines)
+  {
+    $uniq = array();    
+    foreach ($lines as $ll) {
+      if (trim($ll) == '') {
+        continue;
+      }
+      $ll = $this->_parseLogfileLine($ll);
+      $uniq[] = $ll;
+    }   
+
+    return $uniq;
+  }
 
 	function diasDisponibles()
 	{
@@ -80,6 +90,22 @@ class Logger {
 		return $files;
 
 	}
+
+  function requestsPorDate($date)
+  {
+    if(! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $date)){
+      return array();
+    }
+    $fname = $this->logFilename($date);
+    if (! file_exists($fname) ) {
+      return array();
+    }
+    $lines = file_get_contents($fname);
+    $lines = explode("\n",  $lines);
+    return $this->jsonifyParsedLogLines($lines);
+
+    
+  }  
 
 	function _parseLogfileLine(&$line) 
 	{

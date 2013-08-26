@@ -38,36 +38,24 @@ class Logs {
     
   }
 
-  function requests_por_date($date)
+  static function requests_por_date($date)
   {
     global $CONFIG, $app;
 
-    $thisNode = $CONFIG['este_nodo_url'];
-    $stats = new \Argenmap\Cache\Stats();
-
-    $lines = $stats->requestsPorDate($date);
-    $clientes = $stats->clientesPorDate($date);
-    $segundos = $stats->_segundosTotalesPorDate($date);  
-    
-    if (count($lines) == 0 || count($clientes) == 0) {
-      $app->response()->header('Content-Type', 'application/json');
-      echo json_encode(array());
-      return;
+    if(! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $date) ){
+      $app->response()->status(400);
+      $app->response()->header('X-Status-Reason', 'Malformed date');
     }
 
-    $ret = array();
-    $ret['este_nodo'] = $thisNode;
-    $ret['count'] = count($lines);
-    $ret['count_clientes'] = count($clientes);
-    //Asumo que cada tile pesa 8KB
-    //Tengo quecalcular un promedio real en base
-    // a los requests reales.
-    $ret['consumo_estimado'] = 8 * count($lines) . ' KB';
-    $ret['segundos'] = $segundos; 
-    $ret['ancho_de_banda_estimado'] = ( ( 8 * count($lines) ) /  $ret['segundos']). ' KB/S';
+    $thisNode = $CONFIG['este_nodo_url'];
+    $logger = new \Argenmap\Logger();
+
+    $lines = $logger->requestsPorDate($date);
+    //$clientes = $stats->clientesPorDate($date);
+    //$segundos = $stats->_segundosTotalesPorDate($date);  
     
     $app->response()->header('Content-Type', 'application/json');  
-    echo json_encode($ret);  
+    echo json_encode($lines);  
     
 
   }
