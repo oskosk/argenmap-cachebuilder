@@ -23,8 +23,9 @@ $app->get('/cache/truncate', '\Argenmap\Auth::isAdmin', '\Controllers\Cache::tru
 $app->get('/cache/status.json', '\Argenmap\Auth::isAdmin', '\Controllers\Cache::status');
 
 $app->get('/logs/ultimosrequests.json', 'Controllers\Logs::ultimos_requests');
-$app->get('/logs/diasdisponibles.json', 'Controllers\Logs::dias_disponibles');
+$app->get('/logs/disponibles.json', 'Controllers\Logs::logs_disponibles');
 $app->get('/logs/:date/requests.json', 'Controllers\Logs::requests_por_date');
+$app->get('/logs/:date/errors.json', 'Controllers\Logs::errors_por_date');
 
 $app->get('/live/poll', '\Controllers\Live::live_poll');
 $app->get('/live', '\Controllers\Live::live');

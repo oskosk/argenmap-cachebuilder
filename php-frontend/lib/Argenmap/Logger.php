@@ -77,17 +77,39 @@ class Logger {
     return $uniq;
   }
 
-	function diasDisponibles()
+	function logsDisponibles()
 	{
 		$dirname = dirname($this->logFilename());
-		$files = glob("$dirname/log*.txt");
-		$files = array_map(function($v) {
+		$request_logs = glob("$dirname/log*.txt");
+		$request_logs = array_map(function($v) {
 			$fname = basename($v);
 			$fname = explode('log-', $fname);
 			$fname = explode('.', $fname[1]);
-			return $fname[0];
-		}, $files);
-		return $files;
+			return array(
+        'file_name' => basename($v),
+        'size' => filesize($v) . " bytes",
+        'date' => $fname[0]
+      );
+		}, $request_logs);
+
+    $dirname = dirname($this->errorlogFilename());
+    $error_logs = glob("$dirname/error*.txt");
+    $error_logs = array_map(function($v) {
+      $fname = basename($v);
+      $fname = explode('error-', $fname);
+      $fname = explode('.', $fname[1]);
+      return array(
+        'file_name' => basename($v),
+        'size' => filesize($v) . " bytes",
+        'date' => $fname[0]
+      );
+    }, $error_logs);
+
+		return array(
+      'requests' => $request_logs,
+      'errors' => $error_logs
+    );
+
 
 	}
 
@@ -105,7 +127,23 @@ class Logger {
     return $this->jsonifyParsedLogLines($lines);
 
     
-  }  
+  } 
+
+  function errorsPorDate($date)
+  {
+    if(! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $date)){
+      return array();
+    }
+    $fname = $this->errorlogFilename($date);
+    if (! file_exists($fname) ) {
+      return array();
+    }
+    $lines = file_get_contents($fname);
+    $lines = explode("\n",  $lines);
+    return $this->jsonifyParsedLogLines($lines);
+
+    
+  }     
 
 	function _parseLogfileLine(&$line) 
 	{

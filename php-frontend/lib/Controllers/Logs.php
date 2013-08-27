@@ -4,12 +4,22 @@ namespace Controllers;
 
 class Logs {
 
-  static function dias_disponibles()
+  static function logs_disponibles()
   {
     global $app;
     $logger = new \Argenmap\Logger();
-    $lines = $logger->diasDisponibles();
+    $lines = $logger->logsDisponibles();
     $app->response()->header('Content-Type', 'application/json');    
+    $lines['requests'] = array_map(function($v) {
+      global $app;
+      $v['url'] = $app->request()->getUrl() . $app->request()->getRootUri() . "/logs/$v[date]/requests.json";
+      return $v;
+    }, $lines['requests']);
+    $lines['errors'] = array_map(function($v) {
+      global $app;
+      $v['url'] = $app->request()->getUrl() . $app->request()->getRootUri() . "/logs/$v[date]/errors.json";
+      return $v;
+    }, $lines['errors']);    
     echo json_encode($lines);
   }
 
@@ -56,10 +66,27 @@ class Logs {
     
     $app->response()->header('Content-Type', 'application/json');  
     echo json_encode($lines);  
-    
-
   }
 
+  static function errors_por_date($date)
+  {
+    global $CONFIG, $app;
+
+    if(! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $date) ){
+      $app->response()->status(400);
+      $app->response()->header('X-Status-Reason', 'Malformed date');
+    }
+
+    $thisNode = $CONFIG['este_nodo_url'];
+    $logger = new \Argenmap\Logger();
+
+    $lines = $logger->errorsPorDate($date);
+    //$clientes = $stats->clientesPorDate($date);
+    //$segundos = $stats->_segundosTotalesPorDate($date);  
+    
+    $app->response()->header('Content-Type', 'application/json');  
+    echo json_encode($lines);  
+  }
 
   function stats_estenodo_requests()
   {
