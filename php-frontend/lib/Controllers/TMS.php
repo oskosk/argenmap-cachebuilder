@@ -31,12 +31,12 @@ class TMS {
     global $app;
     
     $cache = new \Argenmap\Cache();
-    $response = $cache->tileStatus( $capa, $z, $x, $y, $format );
+    $ret = $cache->tileStatus( $capa, $z, $x, $y, $format );
     
-    if ( $response ) {
+    if ( $ret ) {
       $res = $app->response();
       $res["Content-Type"] = "application/json";
-      echo json_encode($response);
+      echo json_encode($ret);
     } else {
       $app->error('No se pudo conseguir la tile de la capa ' . $capa);
     }  

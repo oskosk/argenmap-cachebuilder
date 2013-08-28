@@ -10,10 +10,10 @@ class Logger {
 
 	function __construct()
 	{
-        $log_filename = $this->logFilename();
-        $error_filename = $this->errorlogFilename();
+    $log_filename = $this->logFilename();
+    $error_filename = $this->errorlogFilename();
 		$this->log = new \KLogger ( $log_filename, \KLogger::DEBUG );
-        $this->error = new \KLogger ( $error_filename , \KLogger::DEBUG );
+    $this->error = new \KLogger ( $error_filename , \KLogger::DEBUG );
 	}
 
 	/** 
