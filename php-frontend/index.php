@@ -17,6 +17,10 @@ $app->notFound(function () use ($app) {
     $app->render( '404.html');
 });
 
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Headers: origin, x-requested-with, content-type');
+header('Access-Control-Allow-Methods: GET, OPTIONS');
+
 $app->get('/tms/:capa/:z/:y/:x\.:format', 'Controllers\TMS::get');
 $app->get('/tms/:capa/:z/:y/:x\.:format/status.json', 'Controllers\TMS::status');
 $app->get('/cache/truncate', '\Argenmap\Auth::isAdmin', '\Controllers\Cache::truncate');
