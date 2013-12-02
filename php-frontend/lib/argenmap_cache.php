@@ -96,16 +96,20 @@ class Argenmap_Cache extends JG_Cache
     }
 
     function traerTile($url)
-    {   
-        
+    {
+        global $CONFIG;
         $f = $this->getAndPassthru($url, CACHE_TTL);
         
         if ($f === false || strlen($f) == 0) {
             $handler = curl_init($url);
             curl_setopt($handler, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($handler, CURLOPT_FAILONERROR, true);
+            if($CONFIG['proxy_url']) {
+                curl_setopt($handler, CURLOPT_PROXY, $CONFIG['proxy_url']);
+            }
             $f = curl_exec($handler);
             if ( $f === false) {
+                $this->LogError('Curl error: ' . curl_error($handler));
                 return false;
             }           
             curl_close($handler);
