@@ -10,7 +10,7 @@
 var liveGraph;
 $(document).ready(function(){
 	liveGraph = new ArgenmapLiveGraph({
-		sourceUrl: '/pruebas/argenmapcachebuilder-con-slim/argenmap-cachebuilder/php-frontend/live/poll',
+		sourceUrl: 'live/poll',
 		longPolling:true
 	});
 });
