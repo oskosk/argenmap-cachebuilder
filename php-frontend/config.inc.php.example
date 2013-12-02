@@ -1,10 +1,17 @@
 <?php
 
 $CONFIG = array(
+	//El Path para los archivos de log y de error	
+	'logs_path' => dirname(__FILE__) . DIRECTORY_SEPARATOR . 'data/logs',
+	//El Path para almacenar las tiles cacheadas  
+	'cache_path' => dirname(__FILE__) . DIRECTORY_SEPARATOR . 'data/cache',
+	//proxy, en caso de ser necesario
+	'proxy_url' => '',
+	//El ID de este nodo  
 	'este_nodo_url' => '',
+	//Las URL Base de la API de otros nodos  	
 	'otros_nodos_url' => array(
-		'',
-		''
 	),
+	//Una key para autenticar los pedidos de truncado de caché
 	'admin_key' => ''
 );
