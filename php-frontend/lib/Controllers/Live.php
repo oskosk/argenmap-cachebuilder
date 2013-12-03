@@ -15,7 +15,6 @@ class Live {
     
     //$usarSesion = isset($_GET['polling']) && $_GET['polling'] == true;
     $interval = isset($_GET['interval']) && !$usarSesion ? int($_GET['interval']) : 1;
-    header("Access-Control-Allow-Origin: *");
     if($usarSesion)
     {
       header('Content-Type: text/text');
