@@ -81,10 +81,16 @@ class Logger {
 	{
 		$dirname = dirname($this->logFilename());
 		$request_logs = glob("$dirname/log*.txt");
+    //Filtro los size==0
+    $request_logs = array_filter($request_logs, function($v) {
+      if (0 != filesize($v) ) {
+        return true;
+      }
+    });        
 		$request_logs = array_map(function($v) {
 			$fname = basename($v);
 			$fname = explode('log-', $fname);
-			$fname = explode('.', $fname[1]);
+			$fname = explode('.', $fname[1]);  
 			return array(
         'file_name' => basename($v),
         'size' => filesize($v) . " bytes",
@@ -94,10 +100,18 @@ class Logger {
 
     $dirname = dirname($this->errorlogFilename());
     $error_logs = glob("$dirname/error*.txt");
+    //Filtro los size==0
+    $error_logs = array_filter($error_logs, function($v) {
+
+      if (0 != filesize($v) ) {
+        return true;
+      }
+    });    
     $error_logs = array_map(function($v) {
       $fname = basename($v);
       $fname = explode('error-', $fname);
       $fname = explode('.', $fname[1]);
+
       return array(
         'file_name' => basename($v),
         'size' => filesize($v) . " bytes",
