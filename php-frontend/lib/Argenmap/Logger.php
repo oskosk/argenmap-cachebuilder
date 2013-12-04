@@ -129,6 +129,21 @@ class Logger {
     
   } 
 
+  function requestsPorDateTxt($date)
+  {
+    if(! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $date)){
+      return array();
+    }
+    $fname = $this->logFilename($date);
+    if (! file_exists($fname) ) {
+      return array();
+    }
+    $txt = file_get_contents($fname);
+    return $txt;
+
+    
+  } 
+
   function errorsPorDate($date)
   {
     if(! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $date)){
