@@ -81,10 +81,26 @@ class Logger {
 	{
 		$dirname = dirname($this->logFilename());
 		$request_logs = glob("$dirname/log*.txt");
+    //Filtro los size==0
+    $request_logs = array_filter($request_logs, function($v) {
+      if (0 != filesize($v) ) {
+        return true;
+      }
+    });
+    /*
+     * http://php.net/manual/es/function.array-filter.php
+     * Because array_filter() preserves keys, you should consider the
+     * resulting array to be an associative array even if the original
+     * array had integer keys for there may be holes in your sequence of keys. 
+     * This means that, for example, json_encode() will convert your result 
+     * array into an object instead of an array. 
+     * Call array_values() on the result array to guarantee json_encode() gives you an array.
+     */
+    $request_logs = array_values($request_logs) ;
 		$request_logs = array_map(function($v) {
 			$fname = basename($v);
 			$fname = explode('log-', $fname);
-			$fname = explode('.', $fname[1]);
+			$fname = explode('.', $fname[1]);  
 			return array(
         'file_name' => basename($v),
         'size' => filesize($v) . " bytes",
@@ -94,10 +110,19 @@ class Logger {
 
     $dirname = dirname($this->errorlogFilename());
     $error_logs = glob("$dirname/error*.txt");
+    //Filtro los size==0
+    $error_logs = array_filter($error_logs, function($v) {
+
+      if (0 != filesize($v) ) {
+        return true;
+      }
+    });    
+    $error_logs = array_values($error_logs) ;
     $error_logs = array_map(function($v) {
       $fname = basename($v);
       $fname = explode('error-', $fname);
       $fname = explode('.', $fname[1]);
+
       return array(
         'file_name' => basename($v),
         'size' => filesize($v) . " bytes",
@@ -129,6 +154,21 @@ class Logger {
     
   } 
 
+  function requestsPorDateTxt($date)
+  {
+    if(! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $date)){
+      return array();
+    }
+    $fname = $this->logFilename($date);
+    if (! file_exists($fname) ) {
+      return false;
+    }
+    $txt = file_get_contents($fname);
+    return $txt;
+
+    
+  } 
+
   function errorsPorDate($date)
   {
     if(! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $date)){
@@ -144,6 +184,20 @@ class Logger {
 
     
   }     
+
+  function errorsPorDateTxt($date)
+  {
+    if(! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $date)){
+      return array();
+    }
+    $fname = $this->errorlogFilename($date);
+    if (! file_exists($fname) ) {
+      return false;
+    }
+    $txt = file_get_contents($fname);
+    return $txt;
+   
+  }    
 
 	function _parseLogfileLine(&$line) 
 	{

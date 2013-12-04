@@ -13,11 +13,13 @@ class Logs {
     $lines['requests'] = array_map(function($v) {
       global $app;
       $v['url'] = $app->request()->getUrl() . $app->request()->getRootUri() . "/logs/$v[date]/requests.json";
+      $v['url_raw'] = $app->request()->getUrl() . $app->request()->getRootUri() . "/logs/$v[date]/requests.txt";      
       return $v;
     }, $lines['requests']);
     $lines['errors'] = array_map(function($v) {
       global $app;
       $v['url'] = $app->request()->getUrl() . $app->request()->getRootUri() . "/logs/$v[date]/errors.json";
+      $v['url_raw'] = $app->request()->getUrl() . $app->request()->getRootUri() . "/logs/$v[date]/errors.txt";      
       return $v;
     }, $lines['errors']);    
     echo json_encode($lines);
@@ -68,6 +70,25 @@ class Logs {
     echo json_encode($lines);  
   }
 
+  static function requests_por_date_txt($date)
+  {
+    global $CONFIG, $app;
+
+    if(! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $date) ){
+      $app->response()->status(400);
+      $app->response()->header('X-Status-Reason', 'Malformed date');
+    }
+
+    $thisNode = $CONFIG['este_nodo_url'];
+    $logger = new \Argenmap\Logger();
+
+    $txt = $logger->requestsPorDateTxt($date);
+ 
+    
+    $app->response()->header('Content-Type', 'text/plain');  
+    echo $txt;  
+  }
+
   static function errors_por_date($date)
   {
     global $CONFIG, $app;
@@ -87,6 +108,24 @@ class Logs {
     $app->response()->header('Content-Type', 'application/json');  
     echo json_encode($lines);  
   }
+
+  static function errors_por_date_txt($date)
+  {
+    global $CONFIG, $app;
+
+    if(! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $date) ){
+      $app->response()->status(400);
+      $app->response()->header('X-Status-Reason', 'Malformed date');
+    }
+
+    $thisNode = $CONFIG['este_nodo_url'];
+    $logger = new \Argenmap\Logger();
+
+    $txt = $logger->errorsPorDateTxt($date);
+    
+    $app->response()->header('Content-Type', 'text/plain');  
+    echo $txt;  
+  }  
 
   function stats_estenodo_requests()
   {
