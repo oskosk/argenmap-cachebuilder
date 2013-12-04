@@ -13,11 +13,13 @@ class Logs {
     $lines['requests'] = array_map(function($v) {
       global $app;
       $v['url'] = $app->request()->getUrl() . $app->request()->getRootUri() . "/logs/$v[date]/requests.json";
+      $v['url_raw'] = $app->request()->getUrl() . $app->request()->getRootUri() . "/logs/$v[date]/requests.txt";      
       return $v;
     }, $lines['requests']);
     $lines['errors'] = array_map(function($v) {
       global $app;
       $v['url'] = $app->request()->getUrl() . $app->request()->getRootUri() . "/logs/$v[date]/errors.json";
+      $v['url_raw'] = $app->request()->getUrl() . $app->request()->getRootUri() . "/logs/$v[date]/errors.txt";      
       return $v;
     }, $lines['errors']);    
     echo json_encode($lines);
