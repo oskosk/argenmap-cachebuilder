@@ -1,6 +1,6 @@
 #ignore log. así no lo borra el update de AppFog
-data/logs/log.txt
-data/logs/error.txt
+data/logs/log-*.txt
+data/logs/error-*.txt
 data/cache/*
 
 
