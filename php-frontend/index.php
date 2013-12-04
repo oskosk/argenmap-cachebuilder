@@ -27,7 +27,7 @@ $app->get('/logs/disponibles.json', 'Controllers\Logs::logs_disponibles');
 $app->get('/logs/:date/requests.json', 'Controllers\Logs::requests_por_date');
 $app->get('/logs/:date/requests.txt', 'Controllers\Logs::requests_por_date_txt');
 $app->get('/logs/:date/errors.json', 'Controllers\Logs::errors_por_date');
-
+$app->get('/logs/:date/errors.txt', 'Controllers\Logs::errors_por_date_txt');
 
 $app->get('/live/poll', '\Controllers\Live::live_poll');
 $app->get('/live', '\Controllers\Live::live');

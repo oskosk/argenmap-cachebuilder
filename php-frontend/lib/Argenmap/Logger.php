@@ -136,7 +136,7 @@ class Logger {
     }
     $fname = $this->logFilename($date);
     if (! file_exists($fname) ) {
-      return array();
+      return false;
     }
     $txt = file_get_contents($fname);
     return $txt;
@@ -159,6 +159,20 @@ class Logger {
 
     
   }     
+
+  function errorsPorDateTxt($date)
+  {
+    if(! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $date)){
+      return array();
+    }
+    $fname = $this->errorlogFilename($date);
+    if (! file_exists($fname) ) {
+      return false;
+    }
+    $txt = file_get_contents($fname);
+    return $txt;
+   
+  }    
 
 	function _parseLogfileLine(&$line) 
 	{

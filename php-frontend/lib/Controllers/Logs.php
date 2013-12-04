@@ -80,12 +80,11 @@ class Logs {
     $thisNode = $CONFIG['este_nodo_url'];
     $logger = new \Argenmap\Logger();
 
-    $lines = $logger->requestsPorDateTxt($date);
-    //$clientes = $stats->clientesPorDate($date);
-    //$segundos = $stats->_segundosTotalesPorDate($date);  
+    $txt = $logger->requestsPorDateTxt($date);
+ 
     
-    $app->response()->header('Content-Type', 'application/json');  
-    echo json_encode($lines);  
+    $app->response()->header('Content-Type', 'text/plain');  
+    echo $txt;  
   }
 
   static function errors_por_date($date)
@@ -107,6 +106,24 @@ class Logs {
     $app->response()->header('Content-Type', 'application/json');  
     echo json_encode($lines);  
   }
+
+  static function errors_por_date_txt($date)
+  {
+    global $CONFIG, $app;
+
+    if(! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $date) ){
+      $app->response()->status(400);
+      $app->response()->header('X-Status-Reason', 'Malformed date');
+    }
+
+    $thisNode = $CONFIG['este_nodo_url'];
+    $logger = new \Argenmap\Logger();
+
+    $txt = $logger->errorsPorDateTxt($date);
+    
+    $app->response()->header('Content-Type', 'text/plain');  
+    echo $txt;  
+  }  
 
   function stats_estenodo_requests()
   {
