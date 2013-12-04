@@ -86,7 +86,17 @@ class Logger {
       if (0 != filesize($v) ) {
         return true;
       }
-    });        
+    });
+    /*
+     * http://php.net/manual/es/function.array-filter.php
+     * Because array_filter() preserves keys, you should consider the
+     * resulting array to be an associative array even if the original
+     * array had integer keys for there may be holes in your sequence of keys. 
+     * This means that, for example, json_encode() will convert your result 
+     * array into an object instead of an array. 
+     * Call array_values() on the result array to guarantee json_encode() gives you an array.
+     */
+    $request_logs = array_values($request_logs) ;
 		$request_logs = array_map(function($v) {
 			$fname = basename($v);
 			$fname = explode('log-', $fname);
@@ -107,6 +117,7 @@ class Logger {
         return true;
       }
     });    
+    $error_logs = array_values($error_logs) ;
     $error_logs = array_map(function($v) {
       $fname = basename($v);
       $fname = explode('error-', $fname);
