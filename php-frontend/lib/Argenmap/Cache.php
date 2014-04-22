@@ -121,6 +121,7 @@ class Cache extends \JG_Cache
             curl_setopt($handler, CURLOPT_CONNECTTIMEOUT, 5);
             $f = curl_exec($handler);
             if ( $f === false) {
+		curl_close($handler);
                 return false;
             }           
             curl_close($handler);
