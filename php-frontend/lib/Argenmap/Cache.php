@@ -118,6 +118,7 @@ class Cache extends \JG_Cache
             $handler = curl_init($url);
             curl_setopt($handler, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($handler, CURLOPT_FAILONERROR, true);
+            curl_setopt($handler, CURLOPT_CONNECTTIMEOUT, 5);
             $f = curl_exec($handler);
             if ( $f === false) {
                 return false;
@@ -146,6 +147,7 @@ class Cache extends \JG_Cache
 
     function logTileServida($z, $x, $y)
     {
+	return;
         $ip='';
         $referer='';
         $forwarded_for = '';
