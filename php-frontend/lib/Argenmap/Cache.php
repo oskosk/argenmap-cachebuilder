@@ -116,20 +116,25 @@ class Cache extends \JG_Cache
         
         if ($f === false || strlen($f) == 0) {
             $handler = curl_init($url);
-            curl_setopt($handler, CURLOPT_RETURNTRANSFER, 1);
+            // Esto aparentemente causa leaks de memory
+	    // sigo recomendación de http://stackoverflow.com/questions/8836171/php-script-memory-leak-issue
+            //curl_setopt($handler, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($handler, CURLOPT_FAILONERROR, true);
             curl_setopt($handler, CURLOPT_CONNECTTIMEOUT, 5);
+	    //uso un buffer para el output en lugar de usar CURLOPT_RETURNTRANSFER
+	    ob_start();
             $f = curl_exec($handler);
-            if ( $f === false) {
-		curl_close($handler);
+	    $contents = ob_get_clean();
+            curl_close($handler);
+		
+            if ( $f === false || ! $contents ) {
                 return false;
             }           
-            curl_close($handler);
-            $this->setRaw($url, $f);
-            $f = $this->getAndPassthru($url, CACHE_TTL);
+            $this->setRaw($url, $contents);
+            $contents = $this->getAndPassthru($url, CACHE_TTL);
         }
 
-        return $f;
+        return $contents;
     }   
 
     function calcularETag($url)
