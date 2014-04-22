@@ -112,9 +112,9 @@ class Cache extends \JG_Cache
     function traerTile($url)
     {   
         
-        $f = $this->getAndPassthru($url, CACHE_TTL);
+        $contents = $this->getAndPassthru($url, CACHE_TTL);
         
-        if ($f === false || strlen($f) == 0) {
+        if ($contents === false || strlen($contents) == 0) {
             $handler = curl_init($url);
             // Esto aparentemente causa leaks de memory
 	    // sigo recomendación de http://stackoverflow.com/questions/8836171/php-script-memory-leak-issue
