@@ -9,7 +9,6 @@ class Logs {
     global $app;
     $logger = new \Argenmap\Logger();
     $lines = $logger->logsDisponibles();
-    $app->response()->header('Content-Type', 'application/json');    
     $lines['requests'] = array_map(function($v) {
       global $app;
       $v['url'] = $app->request()->getUrl() . $app->request()->getRootUri() . "/logs/$v[date]/requests.json";
@@ -22,6 +21,7 @@ class Logs {
       $v['url_raw'] = $app->request()->getUrl() . $app->request()->getRootUri() . "/logs/$v[date]/errors.txt";      
       return $v;
     }, $lines['errors']);    
+    $app->response()->header('Content-Type', 'application/json');    
     echo json_encode($lines);
   }
 

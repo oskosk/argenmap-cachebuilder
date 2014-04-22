@@ -22,7 +22,7 @@ class TMSServer {
     if ($bytes_sent = $cache->traerTile($tileURL) ) {
       $cache->logTileServida($z, $x, $y);
     } else {
-      $cache->LogError("\tNo se pudo leer la tile desde el servicio TMS remoto:\t%s\t%x\%y", $z, $x, $y); 
+      $cache->logger->LogError("\tNo se pudo leer la tile desde el servicio TMS remoto:\t%s\t%x\%y", $z, $x, $y); 
     }
 
       return array(
