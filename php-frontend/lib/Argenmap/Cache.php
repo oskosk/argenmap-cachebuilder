@@ -153,7 +153,6 @@ class Cache extends \JG_Cache
 
     function logTileServida($z, $x, $y)
     {
-	return;
         $ip='';
         $referer='';
         $forwarded_for = '';
@@ -167,7 +166,7 @@ class Cache extends \JG_Cache
             $referer = $_SERVER["HTTP_REFERER"];
         }
 
-        $this->logger->LogInfo("\t$z\t$x\t$y\t$referer\t$ip\t$forwarded_for");        
+        $this->logger->LogInfo("\t$z\t$x\t$y\t$referer");        
     }
 
     function truncate()

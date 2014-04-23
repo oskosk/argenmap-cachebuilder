@@ -211,11 +211,6 @@ class Logger {
 		$trash = explode(' ', $datetime);
 		$date = $trash[0];
 		$referer = $request[4];
-		$ip = $request[5];
-		//este campo suele venir vacío porque
-		// generalmente no hay proxies involucrador en el request
-		// De hecho, muchos proxies ocultan la ip privada		
-		$private_ip = @$request[6];
 
 		$ret = array();
 		$ret['date'] = $date;
@@ -227,28 +222,6 @@ class Logger {
 		);
 		$ret['referer'] = $referer;
 		
-		// Este chequeo es porque el proxy de AppFog, 
-		// en el header(string) X_FORWARDED_FOR mete
-		// la IP pública del cliente y un 127.0.0.1
-		// separados por comas porque usa reverse
-		// proxies para balancear los pedidos a cada app
-		$private_stuff = explode(',', $private_ip);
-		if ( count($private_stuff) == 2) {
-			//caso de request normal sin proxy
-			$ip = $private_stuff[0];
-			$private_ip = false;
-		} elseif( count($private_stuff) == 3) {
-			//caso de request normal con proxy
-			$ip = $private_stuff[1];
-			$private_ip = $private_stuff[0];
-		} elseif( count($private_stuff) == 4) {
-			// caso de request normal con proxy pero
-			// con dos 127.0.0.1 en el campo x_forwarded_for
-			$ip = $private_stuff[2];
-			$private_ip = $private_stuff[0];
-		}
-		$ret['ip'] = trim($ip);		
-		$ret['private_ip'] = trim($private_ip);
 
 		return $ret;
 	}
